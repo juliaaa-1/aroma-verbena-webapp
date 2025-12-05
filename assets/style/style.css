@@ -851,6 +851,7 @@ section {
 .faq-item.active .faq-answer {
     max-height: 1000px;
     padding: 20px 25px 25px;
+    opacity: 1;
 }
 
 .faq-answer p {
@@ -1065,6 +1066,20 @@ section {
     
     .banner-subtitle {
         font-size: 1.2rem;
+    }
+    
+    /* Рамочка для баннера на планшетах и телефонах */
+    .banner .banner-content {
+        padding: 20px;
+        margin: 0 auto;
+        max-width: calc(100% - 40px);
+        width: calc(100% - 40px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
     
     .section-title {
@@ -1318,12 +1333,26 @@ section {
         min-height: 500px;
     }
     
+    .banner .banner-content {
+        padding: 20px !important;
+        margin: 0 auto !important;
+        max-width: calc(100% - 40px) !important;
+        width: calc(100% - 40px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 20px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    }
+    
     .banner-title {
-        font-size: 2rem;
+        font-size: 1.5rem !important;
+        margin-bottom: 15px !important;
     }
     
     .banner-subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem !important;
     }
     
     section {
