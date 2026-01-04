@@ -98,18 +98,19 @@ if (servicesTrack && servicesNext) {
         return Math.max(0, totalCards - cardsPerView);
     };
     
-    // Бесконечное листание вперед
+    // Плавное бесконечное листание вперед
     const goToNext = () => {
         if (isScrolling) return;
         isScrolling = true;
         
         const cardWidth = getCardWidth();
         const maxIndex = getMaxIndex();
-        currentServiceIndex++;
         
-        if (currentServiceIndex > maxIndex) {
+        if (currentServiceIndex >= maxIndex) {
             // Плавно переходим к началу
             currentServiceIndex = 0;
+        } else {
+            currentServiceIndex++;
         }
         
         servicesTrack.scrollTo({
@@ -122,18 +123,19 @@ if (servicesTrack && servicesNext) {
         }, 400);
     };
     
-    // Бесконечное листание назад
+    // Плавное бесконечное листание назад
     const goToPrev = () => {
         if (isScrolling) return;
         isScrolling = true;
         
         const cardWidth = getCardWidth();
         const maxIndex = getMaxIndex();
-        currentServiceIndex--;
         
-        if (currentServiceIndex < 0) {
+        if (currentServiceIndex <= 0) {
             // Плавно переходим к концу
             currentServiceIndex = maxIndex;
+        } else {
+            currentServiceIndex--;
         }
         
         servicesTrack.scrollTo({
@@ -187,23 +189,71 @@ if (servicesTrack && servicesNext) {
     }, 100);
 }
 
-// Слайдер отзывов - бесконечный, без быстрого перехода
+// Новый простой слайдер отзывов
 const reviewsTrack = document.getElementById('reviewsTrack');
 const reviewsNext = document.getElementById('reviewsNext');
 const reviewsPrev = document.getElementById('reviewsPrev');
 
-if (reviewsTrack && reviewsNext) {
-    let currentReviewIndex = 1;
+if (reviewsTrack) {
+    let currentReviewIndex = 0;
     let isScrolling = false;
     
-    const getReviewWidth = () => {
+    // Получаем все карточки отзывов
+    const getReviewCards = () => {
+        return document.querySelectorAll('.review-card');
+    };
+    
+    // Получаем ширину одной карточки
+    const getCardWidth = () => {
         return reviewsTrack.offsetWidth;
     };
     
-    const getTotalReviews = () => {
-        return document.querySelectorAll('.review-card:not(.review-card-clone)').length;
+    // Переход к определенному отзыву
+    const goToReview = (index) => {
+        if (isScrolling) return;
+        
+        const cards = getReviewCards();
+        const totalCards = cards.length;
+        
+        if (totalCards === 0) return;
+        
+        // Обеспечиваем циклическое листание
+        if (index >= totalCards) {
+            currentReviewIndex = 0;
+        } else if (index < 0) {
+            currentReviewIndex = totalCards - 1;
+        } else {
+            currentReviewIndex = index;
+        }
+        
+        isScrolling = true;
+        const cardWidth = getCardWidth();
+        
+        reviewsTrack.scrollTo({
+            left: currentReviewIndex * cardWidth,
+            behavior: 'smooth'
+        });
+        
+        // Сворачиваем все отзывы при переключении
+        collapseAllReviews();
+        
+        setTimeout(() => {
+            isScrolling = false;
+            initReviewReadMore();
+        }, 400);
     };
-
+    
+    // Следующий отзыв
+    const nextReview = () => {
+        goToReview(currentReviewIndex + 1);
+    };
+    
+    // Предыдущий отзыв
+    const prevReview = () => {
+        goToReview(currentReviewIndex - 1);
+    };
+    
+    // Сворачивание всех отзывов
     const collapseAllReviews = () => {
         document.querySelectorAll('.review-card').forEach(card => {
             const reviewText = card.querySelector('.review-text');
@@ -217,9 +267,8 @@ if (reviewsTrack && reviewsNext) {
         });
     };
     
-    // Добавление кнопок листания в карточки отзывов (только для мобильных 756px и меньше)
+    // Добавление кнопок навигации в карточки (только для мобильных 756px и меньше)
     const addReviewCardButtons = () => {
-        // Добавляем кнопки только на мобильных устройствах (756px и меньше)
         if (window.innerWidth > 756) {
             // На ПК убираем все кнопки навигации из карточек
             const existingNavs = document.querySelectorAll('.review-card-nav');
@@ -227,7 +276,7 @@ if (reviewsTrack && reviewsNext) {
             return;
         }
         
-        const cards = document.querySelectorAll('.review-card:not(.review-card-clone)');
+        const cards = getReviewCards();
         cards.forEach(card => {
             // Удаляем старые кнопки, если есть
             const oldNav = card.querySelector('.review-card-nav');
@@ -244,7 +293,7 @@ if (reviewsTrack && reviewsNext) {
             prevBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                handlePrevReview();
+                prevReview();
             });
             
             const nextBtn = document.createElement('button');
@@ -253,7 +302,7 @@ if (reviewsTrack && reviewsNext) {
             nextBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                handleNextReview();
+                nextReview();
             });
             
             nav.appendChild(prevBtn);
@@ -262,158 +311,23 @@ if (reviewsTrack && reviewsNext) {
         });
     };
     
-    // Инициализация бесконечного слайдера
-    const initInfiniteSlider = () => {
-        const cards = Array.from(reviewsTrack.querySelectorAll('.review-card:not(.review-card-clone)'));
-        if (cards.length === 0) return;
-        
-        // Удаляем старые клоны
-        reviewsTrack.querySelectorAll('.review-card-clone').forEach(clone => clone.remove());
-        
-        // Клонируем последний элемент в начало
-        const lastClone = cards[cards.length - 1].cloneNode(true);
-        lastClone.classList.add('review-card-clone');
-        reviewsTrack.insertBefore(lastClone, cards[0]);
-        
-        // Клонируем первый элемент в конец
-        const firstClone = cards[0].cloneNode(true);
-        firstClone.classList.add('review-card-clone');
-        reviewsTrack.appendChild(firstClone);
-        
-        // Прокручиваем к первому реальному элементу
-        const reviewWidth = getReviewWidth();
+    // Инициализация слайдера
+    const initReviewSlider = () => {
+        currentReviewIndex = 0;
         reviewsTrack.scrollTo({
-            left: reviewWidth,
+            left: 0,
             behavior: 'auto'
         });
-        currentReviewIndex = 1;
-        
-        // Добавляем кнопки в карточки
         addReviewCardButtons();
-    };
-
-    const scrollToReview = (index) => {
-        const reviewWidth = getReviewWidth();
-        const totalReviews = getTotalReviews();
-        
-        // Обработка бесконечного листания
-        if (index >= totalReviews + 1) {
-            currentReviewIndex = 1;
-            reviewsTrack.scrollTo({
-                left: (totalReviews + 1) * reviewWidth,
-                behavior: 'smooth'
-            });
-            setTimeout(() => {
-                reviewsTrack.scrollTo({
-                    left: currentReviewIndex * reviewWidth,
-                    behavior: 'auto'
-                });
-                isScrolling = false;
-                initReviewReadMore();
-            }, 300);
-            return;
-        }
-        
-        if (index <= 0) {
-            currentReviewIndex = totalReviews;
-            reviewsTrack.scrollTo({
-                left: 0,
-                behavior: 'smooth'
-            });
-            setTimeout(() => {
-                reviewsTrack.scrollTo({
-                    left: currentReviewIndex * reviewWidth,
-                    behavior: 'auto'
-                });
-                isScrolling = false;
-                initReviewReadMore();
-            }, 300);
-            return;
-        }
-        
-        currentReviewIndex = index;
-        reviewsTrack.scrollTo({
-            left: currentReviewIndex * reviewWidth,
-            behavior: 'smooth'
-        });
-        
-        setTimeout(() => {
-            isScrolling = false;
-            initReviewReadMore();
-        }, 300);
+        initReviewReadMore();
     };
     
-    // Отслеживание скролла для бесконечного листания
-    let scrollTimeout;
-    reviewsTrack.addEventListener('scroll', () => {
-        if (isScrolling) return;
-        
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            const reviewWidth = getReviewWidth();
-            if (reviewWidth === 0) return;
-            
-            const scrollLeft = reviewsTrack.scrollLeft;
-            const totalReviews = getTotalReviews();
-            const newIndex = Math.round(scrollLeft / reviewWidth);
-            
-            if (newIndex >= totalReviews + 1) {
-                currentReviewIndex = 1;
-                reviewsTrack.scrollTo({
-                    left: currentReviewIndex * reviewWidth,
-                    behavior: 'auto'
-                });
-            } else if (newIndex <= 0) {
-                currentReviewIndex = totalReviews;
-                reviewsTrack.scrollTo({
-                    left: currentReviewIndex * reviewWidth,
-                    behavior: 'auto'
-                });
-            } else {
-                currentReviewIndex = newIndex;
-            }
-            
-            // Добавляем кнопки при скролле
-            addReviewCardButtons();
-        }, 50);
-    });
-
-    let lastClickTime = 0;
-    const CLICK_DEBOUNCE = 400;
-
-    const handleNextReview = () => {
-        const now = Date.now();
-        if (isScrolling || (now - lastClickTime) < CLICK_DEBOUNCE) {
-            return;
-        }
-        lastClickTime = now;
-        isScrolling = true;
-        
-        collapseAllReviews();
-        const totalReviews = getTotalReviews();
-        currentReviewIndex++;
-        scrollToReview(currentReviewIndex);
-    };
-
-    const handlePrevReview = () => {
-        const now = Date.now();
-        if (isScrolling || (now - lastClickTime) < CLICK_DEBOUNCE) {
-            return;
-        }
-        lastClickTime = now;
-        isScrolling = true;
-        
-        collapseAllReviews();
-        const totalReviews = getTotalReviews();
-        currentReviewIndex--;
-        scrollToReview(currentReviewIndex);
-    };
-    
+    // Обработчики внешних кнопок
     if (reviewsNext) {
         reviewsNext.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleNextReview();
+            nextReview();
         });
     }
     
@@ -421,34 +335,20 @@ if (reviewsTrack && reviewsNext) {
         reviewsPrev.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            handlePrevReview();
+            prevReview();
         });
     }
     
     // Инициализация при загрузке
-    initInfiniteSlider();
-    
-    // Добавляем кнопки сразу после инициализации
-    setTimeout(() => {
-        addReviewCardButtons();
-    }, 200);
+    initReviewSlider();
     
     // Обновление при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            initInfiniteSlider();
-            initReviewReadMore();
-            setTimeout(() => {
-                addReviewCardButtons();
-            }, 200);
+            initReviewSlider();
         }, 250);
-    });
-    
-    // Добавляем кнопки при изменении слайдера
-    reviewsTrack.addEventListener('scroll', () => {
-        setTimeout(addReviewCardButtons, 100);
     });
 }
 
@@ -473,32 +373,22 @@ if (interiorTrack) {
         return document.querySelectorAll('.interior-item:not(.interior-item-clone)').length;
     };
     
-    // Инициализация бесконечного слайдера
+    // Упрощенная инициализация слайдера интерьера
     const initInfiniteSlider = () => {
         const items = Array.from(interiorTrack.querySelectorAll('.interior-item:not(.interior-item-clone)'));
         if (items.length === 0) return;
         
-        // Удаляем старые клоны
+        // Удаляем старые клоны если есть
         interiorTrack.querySelectorAll('.interior-item-clone').forEach(clone => clone.remove());
         
-        // Клонируем последний элемент в начало
-        const lastClone = items[items.length - 1].cloneNode(true);
-        lastClone.classList.add('interior-item-clone');
-        interiorTrack.insertBefore(lastClone, items[0]);
-        
-        // Клонируем первый элемент в конец
-        const firstClone = items[0].cloneNode(true);
-        firstClone.classList.add('interior-item-clone');
-        interiorTrack.appendChild(firstClone);
-        
-        // Прокручиваем к первому реальному элементу
+        // Устанавливаем начальную позицию на первый элемент
         const itemWidth = getItemWidth();
+        currentInteriorIndex = 1;
         if (itemWidth > 0) {
             interiorTrack.scrollTo({
-                left: itemWidth,
+                left: 0,
                 behavior: 'auto'
             });
-            currentInteriorIndex = 1;
         }
         updateDots();
     };
@@ -610,7 +500,13 @@ if (interiorTrack) {
         }
         
         const totalItems = getTotalItems();
-        currentInteriorIndex++;
+        
+        // Плавное бесконечное листание
+        if (currentInteriorIndex >= totalItems) {
+            currentInteriorIndex = 1; // Переходим к первому элементу
+        } else {
+            currentInteriorIndex++;
+        }
         
         interiorTrack.scrollTo({
             left: currentInteriorIndex * itemWidth,
@@ -618,13 +514,6 @@ if (interiorTrack) {
         });
         
         setTimeout(() => {
-            if (currentInteriorIndex >= totalItems + 1) {
-                currentInteriorIndex = 1;
-                interiorTrack.scrollTo({
-                    left: currentInteriorIndex * itemWidth,
-                    behavior: 'auto'
-                });
-            }
             isScrolling = false;
             isAutoScrolling = false;
             updateCurrentIndex();
@@ -649,7 +538,13 @@ if (interiorTrack) {
         }
         
         const totalItems = getTotalItems();
-        currentInteriorIndex--;
+        
+        // Плавное бесконечное листание
+        if (currentInteriorIndex <= 1) {
+            currentInteriorIndex = totalItems; // Переходим к последнему элементу
+        } else {
+            currentInteriorIndex--;
+        }
         
         interiorTrack.scrollTo({
             left: currentInteriorIndex * itemWidth,
@@ -657,13 +552,6 @@ if (interiorTrack) {
         });
         
         setTimeout(() => {
-            if (currentInteriorIndex <= 0) {
-                currentInteriorIndex = totalItems;
-                interiorTrack.scrollTo({
-                    left: currentInteriorIndex * itemWidth,
-                    behavior: 'auto'
-                });
-            }
             isScrolling = false;
             updateCurrentIndex();
         }, 400);
@@ -766,7 +654,7 @@ if (interiorTrack) {
         handleUserInteraction();
     });
     
-    // Отслеживание скролла для обновления точек
+    // Упрощенное отслеживание скролла для интерьера
     let scrollTimeout;
     let lastScrollLeft = 0;
     interiorTrack.addEventListener('scroll', () => {
@@ -778,7 +666,7 @@ if (interiorTrack) {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
             if (!isAutoScrolling) {
-                updateCurrentIndex();
+                updateDots();
             }
         }, 150);
         
@@ -981,10 +869,3 @@ if (document.readyState === 'loading') {
 window.addEventListener('resize', () => {
     setTimeout(initReviewReadMore, 100);
 });
-
-if (reviewsTrack) {
-    reviewsTrack.addEventListener('scroll', () => {
-        clearTimeout(window.reviewReadMoreTimeout);
-        window.reviewReadMoreTimeout = setTimeout(initReviewReadMore, 100);
-    });
-}
