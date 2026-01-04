@@ -59,7 +59,7 @@ if (scrollDown) {
     });
 }
 
-// Слайдер услуг
+// Слайдер услуг - рабочая версия из репозитория
 const servicesTrack = document.getElementById('servicesTrack');
 const servicesNext = document.getElementById('servicesNext');
 const servicesPrev = document.getElementById('servicesPrev');
@@ -69,15 +69,23 @@ if (servicesTrack && servicesNext) {
     let isScrolling = false;
     
     const getCardsPerView = () => {
-        if (window.innerWidth <= 768) return 1;
-        if (window.innerWidth <= 1024) return 2;
-        return 3;
+        if (window.innerWidth <= 768) return 1;  // До 768px - 1 карточка
+        if (window.innerWidth <= 1024) return 2; // От 769px до 1024px - 2 карточки
+        return 3; // Свыше 1024px - 3 карточки
     };
     
     const getCardWidth = () => {
         const cardsPerView = getCardsPerView();
+        const trackWidth = servicesTrack.offsetWidth;
+        
+        // Для мобильных (1 карточка) возвращаем полную ширину трека
+        if (cardsPerView === 1) {
+            return trackWidth;
+        }
+        
+        // Для планшетов и ПК: ширина карточки + gap
         const gap = 30;
-        return (servicesTrack.offsetWidth - (gap * (cardsPerView - 1))) / cardsPerView + gap;
+        return (trackWidth - (gap * (cardsPerView - 1))) / cardsPerView + gap;
     };
     
     const getTotalCards = () => {
@@ -102,20 +110,16 @@ if (servicesTrack && servicesNext) {
         if (currentServiceIndex > maxIndex) {
             // Плавно переходим к началу
             currentServiceIndex = 0;
-            servicesTrack.scrollTo({
-                left: 0,
-                behavior: 'smooth'
-            });
-        } else {
-            servicesTrack.scrollTo({
-                left: currentServiceIndex * cardWidth,
-                behavior: 'smooth'
-            });
         }
+        
+        servicesTrack.scrollTo({
+            left: currentServiceIndex * cardWidth,
+            behavior: 'smooth'
+        });
         
         setTimeout(() => {
             isScrolling = false;
-        }, 300);
+        }, 400);
     };
     
     // Бесконечное листание назад
@@ -130,20 +134,16 @@ if (servicesTrack && servicesNext) {
         if (currentServiceIndex < 0) {
             // Плавно переходим к концу
             currentServiceIndex = maxIndex;
-            servicesTrack.scrollTo({
-                left: maxIndex * cardWidth,
-                behavior: 'smooth'
-            });
-        } else {
-            servicesTrack.scrollTo({
-                left: currentServiceIndex * cardWidth,
-                behavior: 'smooth'
-            });
         }
+        
+        servicesTrack.scrollTo({
+            left: currentServiceIndex * cardWidth,
+            behavior: 'smooth'
+        });
         
         setTimeout(() => {
             isScrolling = false;
-        }, 300);
+        }, 400);
     };
 
     servicesNext.addEventListener('click', goToNext);
@@ -158,31 +158,54 @@ if (servicesTrack && servicesNext) {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             const cardWidth = getCardWidth();
+            const maxIndex = getMaxIndex();
+            
+            // Корректируем индекс, если он выходит за пределы
+            if (currentServiceIndex > maxIndex) {
+                currentServiceIndex = maxIndex;
+            }
+            
+            // Устанавливаем правильную позицию
+            const scrollPosition = currentServiceIndex * cardWidth;
             servicesTrack.scrollTo({
-                left: currentServiceIndex * cardWidth,
+                left: scrollPosition,
                 behavior: 'auto'
             });
+            
+            // Сбрасываем флаг скролла
+            isScrolling = false;
         }, 250);
     });
+    
+    // Инициализация: устанавливаем начальную позицию
+    setTimeout(() => {
+        servicesTrack.scrollTo({
+            left: 0,
+            behavior: 'auto'
+        });
+        currentServiceIndex = 0;
+    }, 100);
 }
 
-// Слайдер отзывов
+// Слайдер отзывов - бесконечный, без быстрого перехода
 const reviewsTrack = document.getElementById('reviewsTrack');
 const reviewsNext = document.getElementById('reviewsNext');
 const reviewsPrev = document.getElementById('reviewsPrev');
 
 if (reviewsTrack && reviewsNext) {
-    const reviewCards = document.querySelectorAll('.review-card');
-    let currentReviewIndex = 0;
+    let currentReviewIndex = 1;
     let isScrolling = false;
     
     const getReviewWidth = () => {
         return reviewsTrack.offsetWidth;
     };
+    
+    const getTotalReviews = () => {
+        return document.querySelectorAll('.review-card:not(.review-card-clone)').length;
+    };
 
     const collapseAllReviews = () => {
-        // Сворачиваем все развернутые отзывы
-        reviewCards.forEach(card => {
+        document.querySelectorAll('.review-card').forEach(card => {
             const reviewText = card.querySelector('.review-text');
             const readMore = card.querySelector('.review-read-more');
             if (reviewText && reviewText.classList.contains('review-text-full')) {
@@ -193,17 +216,122 @@ if (reviewsTrack && reviewsNext) {
             }
         });
     };
+    
+    // Добавление кнопок листания в карточки отзывов (только для мобильных 756px и меньше)
+    const addReviewCardButtons = () => {
+        // Добавляем кнопки только на мобильных устройствах (756px и меньше)
+        if (window.innerWidth > 756) {
+            // На ПК убираем все кнопки навигации из карточек
+            const existingNavs = document.querySelectorAll('.review-card-nav');
+            existingNavs.forEach(nav => nav.remove());
+            return;
+        }
+        
+        const cards = document.querySelectorAll('.review-card:not(.review-card-clone)');
+        cards.forEach(card => {
+            // Удаляем старые кнопки, если есть
+            const oldNav = card.querySelector('.review-card-nav');
+            if (oldNav) {
+                oldNav.remove();
+            }
+            
+            const nav = document.createElement('div');
+            nav.className = 'review-card-nav';
+            
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'review-card-nav-btn review-card-nav-prev';
+            prevBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>';
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handlePrevReview();
+            });
+            
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'review-card-nav-btn review-card-nav-next';
+            nextBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleNextReview();
+            });
+            
+            nav.appendChild(prevBtn);
+            nav.appendChild(nextBtn);
+            card.appendChild(nav);
+        });
+    };
+    
+    // Инициализация бесконечного слайдера
+    const initInfiniteSlider = () => {
+        const cards = Array.from(reviewsTrack.querySelectorAll('.review-card:not(.review-card-clone)'));
+        if (cards.length === 0) return;
+        
+        // Удаляем старые клоны
+        reviewsTrack.querySelectorAll('.review-card-clone').forEach(clone => clone.remove());
+        
+        // Клонируем последний элемент в начало
+        const lastClone = cards[cards.length - 1].cloneNode(true);
+        lastClone.classList.add('review-card-clone');
+        reviewsTrack.insertBefore(lastClone, cards[0]);
+        
+        // Клонируем первый элемент в конец
+        const firstClone = cards[0].cloneNode(true);
+        firstClone.classList.add('review-card-clone');
+        reviewsTrack.appendChild(firstClone);
+        
+        // Прокручиваем к первому реальному элементу
+        const reviewWidth = getReviewWidth();
+        reviewsTrack.scrollTo({
+            left: reviewWidth,
+            behavior: 'auto'
+        });
+        currentReviewIndex = 1;
+        
+        // Добавляем кнопки в карточки
+        addReviewCardButtons();
+    };
 
     const scrollToReview = (index) => {
-        if (isScrolling) return;
-        isScrolling = true;
-        
-        // Сворачиваем все отзывы перед переключением
-        collapseAllReviews();
-        
         const reviewWidth = getReviewWidth();
-        currentReviewIndex = index;
+        const totalReviews = getTotalReviews();
         
+        // Обработка бесконечного листания
+        if (index >= totalReviews + 1) {
+            currentReviewIndex = 1;
+            reviewsTrack.scrollTo({
+                left: (totalReviews + 1) * reviewWidth,
+                behavior: 'smooth'
+            });
+            setTimeout(() => {
+                reviewsTrack.scrollTo({
+                    left: currentReviewIndex * reviewWidth,
+                    behavior: 'auto'
+                });
+                isScrolling = false;
+                initReviewReadMore();
+            }, 300);
+            return;
+        }
+        
+        if (index <= 0) {
+            currentReviewIndex = totalReviews;
+            reviewsTrack.scrollTo({
+                left: 0,
+                behavior: 'smooth'
+            });
+            setTimeout(() => {
+                reviewsTrack.scrollTo({
+                    left: currentReviewIndex * reviewWidth,
+                    behavior: 'auto'
+                });
+                isScrolling = false;
+                initReviewReadMore();
+            }, 300);
+            return;
+        }
+        
+        currentReviewIndex = index;
         reviewsTrack.scrollTo({
             left: currentReviewIndex * reviewWidth,
             behavior: 'smooth'
@@ -214,94 +342,186 @@ if (reviewsTrack && reviewsNext) {
             initReviewReadMore();
         }, 300);
     };
+    
+    // Отслеживание скролла для бесконечного листания
+    let scrollTimeout;
+    reviewsTrack.addEventListener('scroll', () => {
+        if (isScrolling) return;
+        
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            const reviewWidth = getReviewWidth();
+            if (reviewWidth === 0) return;
+            
+            const scrollLeft = reviewsTrack.scrollLeft;
+            const totalReviews = getTotalReviews();
+            const newIndex = Math.round(scrollLeft / reviewWidth);
+            
+            if (newIndex >= totalReviews + 1) {
+                currentReviewIndex = 1;
+                reviewsTrack.scrollTo({
+                    left: currentReviewIndex * reviewWidth,
+                    behavior: 'auto'
+                });
+            } else if (newIndex <= 0) {
+                currentReviewIndex = totalReviews;
+                reviewsTrack.scrollTo({
+                    left: currentReviewIndex * reviewWidth,
+                    behavior: 'auto'
+                });
+            } else {
+                currentReviewIndex = newIndex;
+            }
+            
+            // Добавляем кнопки при скролле
+            addReviewCardButtons();
+        }, 50);
+    });
+
+    let lastClickTime = 0;
+    const CLICK_DEBOUNCE = 400;
 
     const handleNextReview = () => {
-        // Сворачиваем все отзывы перед переключением
-        collapseAllReviews();
-        if (currentReviewIndex < reviewCards.length - 1) {
-            scrollToReview(currentReviewIndex + 1);
-        } else {
-            scrollToReview(0);
+        const now = Date.now();
+        if (isScrolling || (now - lastClickTime) < CLICK_DEBOUNCE) {
+            return;
         }
+        lastClickTime = now;
+        isScrolling = true;
+        
+        collapseAllReviews();
+        const totalReviews = getTotalReviews();
+        currentReviewIndex++;
+        scrollToReview(currentReviewIndex);
     };
 
-    reviewsNext.addEventListener('click', handleNextReview);
+    const handlePrevReview = () => {
+        const now = Date.now();
+        if (isScrolling || (now - lastClickTime) < CLICK_DEBOUNCE) {
+            return;
+        }
+        lastClickTime = now;
+        isScrolling = true;
+        
+        collapseAllReviews();
+        const totalReviews = getTotalReviews();
+        currentReviewIndex--;
+        scrollToReview(currentReviewIndex);
+    };
     
-    // Обработка кнопок "Следующий отзыв" внутри карточек на мобильных
-    document.querySelectorAll('.review-next-mobile').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    if (reviewsNext) {
+        reviewsNext.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             handleNextReview();
         });
-    });
+    }
     
     if (reviewsPrev) {
-        reviewsPrev.addEventListener('click', () => {
-            if (currentReviewIndex > 0) {
-                scrollToReview(currentReviewIndex - 1);
-            } else {
-                scrollToReview(reviewCards.length - 1);
-            }
+        reviewsPrev.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handlePrevReview();
         });
     }
+    
+    // Инициализация при загрузке
+    initInfiniteSlider();
+    
+    // Добавляем кнопки сразу после инициализации
+    setTimeout(() => {
+        addReviewCardButtons();
+    }, 200);
     
     // Обновление при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            const reviewWidth = getReviewWidth();
-            reviewsTrack.scrollTo({
-                left: currentReviewIndex * reviewWidth,
-                behavior: 'auto'
-            });
+            initInfiniteSlider();
             initReviewReadMore();
+            setTimeout(() => {
+                addReviewCardButtons();
+            }, 200);
         }, 250);
+    });
+    
+    // Добавляем кнопки при изменении слайдера
+    reviewsTrack.addEventListener('scroll', () => {
+        setTimeout(addReviewCardButtons, 100);
     });
 }
 
-// Слайдер интерьера (с авто-прокруткой)
+// Слайдер интерьера - бесконечный, автопрокрутка каждые 2 секунды, без быстрого перехода
 const interiorTrack = document.getElementById('interiorTrack');
 const interiorPrev = document.getElementById('interiorPrev');
 const interiorNext = document.getElementById('interiorNext');
 const interiorDots = document.getElementById('interiorDots');
+const interiorNavPrev = document.getElementById('interiorNavPrev');
+const interiorNavNext = document.getElementById('interiorNavNext');
 
 if (interiorTrack) {
-    const interiorItems = document.querySelectorAll('.interior-item');
-    let currentInteriorIndex = 0;
+    let currentInteriorIndex = 1;
     let isScrolling = false;
     let autoSlideInterval = null;
-    const totalItems = interiorItems.length;
     
     const getItemWidth = () => {
         return interiorTrack.offsetWidth;
     };
     
-    const getMaxIndex = () => {
-        return interiorItems.length - 1;
+    const getTotalItems = () => {
+        return document.querySelectorAll('.interior-item:not(.interior-item-clone)').length;
+    };
+    
+    // Инициализация бесконечного слайдера
+    const initInfiniteSlider = () => {
+        const items = Array.from(interiorTrack.querySelectorAll('.interior-item:not(.interior-item-clone)'));
+        if (items.length === 0) return;
+        
+        // Удаляем старые клоны
+        interiorTrack.querySelectorAll('.interior-item-clone').forEach(clone => clone.remove());
+        
+        // Клонируем последний элемент в начало
+        const lastClone = items[items.length - 1].cloneNode(true);
+        lastClone.classList.add('interior-item-clone');
+        interiorTrack.insertBefore(lastClone, items[0]);
+        
+        // Клонируем первый элемент в конец
+        const firstClone = items[0].cloneNode(true);
+        firstClone.classList.add('interior-item-clone');
+        interiorTrack.appendChild(firstClone);
+        
+        // Прокручиваем к первому реальному элементу
+        const itemWidth = getItemWidth();
+        if (itemWidth > 0) {
+            interiorTrack.scrollTo({
+                left: itemWidth,
+                behavior: 'auto'
+            });
+            currentInteriorIndex = 1;
+        }
+        updateDots();
     };
     
     const updateDots = () => {
         if (!interiorDots) return;
         
-        // Очищаем точки
         interiorDots.innerHTML = '';
         
-        // Создаем точки для каждой фотографии
+        const totalItems = getTotalItems();
+        
         for (let i = 0; i < totalItems; i++) {
             const dot = document.createElement('div');
             dot.className = 'interior-dot';
             
-            // Определяем активность точки
-            const isActive = currentInteriorIndex === i;
+            const isActive = (currentInteriorIndex - 1) === i || (currentInteriorIndex === 0 && i === totalItems - 1) || (currentInteriorIndex === totalItems + 1 && i === 0);
             
             if (isActive) {
                 dot.classList.add('active');
             }
             
             dot.addEventListener('click', () => {
-                scrollToIndex(i);
+                scrollToIndex(i + 1);
                 resetAutoSlide();
             });
             
@@ -311,20 +531,30 @@ if (interiorTrack) {
     
     const updateCurrentIndex = () => {
         const itemWidth = getItemWidth();
-        if (itemWidth === 0) return; // Защита от деления на ноль
+        if (itemWidth === 0) return;
         
         const scrollLeft = interiorTrack.scrollLeft;
         const newIndex = Math.round(scrollLeft / itemWidth);
+        const totalItems = getTotalItems();
         
-        // Обработка граничных случаев
-        if (newIndex < 0) {
-            currentInteriorIndex = 0;
-        } else if (newIndex >= totalItems) {
-            currentInteriorIndex = totalItems - 1;
-        } else if (newIndex !== currentInteriorIndex) {
-            currentInteriorIndex = newIndex;
+        if (newIndex !== currentInteriorIndex) {
+            if (newIndex === 0) {
+                currentInteriorIndex = totalItems;
+                interiorTrack.scrollTo({
+                    left: currentInteriorIndex * itemWidth,
+                    behavior: 'auto'
+                });
+            } else if (newIndex >= totalItems + 1) {
+                currentInteriorIndex = 1;
+                interiorTrack.scrollTo({
+                    left: currentInteriorIndex * itemWidth,
+                    behavior: 'auto'
+                });
+            } else {
+                currentInteriorIndex = newIndex;
+            }
+            updateDots();
         }
-        updateDots();
     };
     
     const scrollToIndex = (index) => {
@@ -332,6 +562,11 @@ if (interiorTrack) {
         isScrolling = true;
         
         const itemWidth = getItemWidth();
+        if (itemWidth === 0) {
+            isScrolling = false;
+            return;
+        }
+        
         currentInteriorIndex = index;
         
         interiorTrack.scrollTo({
@@ -340,6 +575,21 @@ if (interiorTrack) {
         });
         
         setTimeout(() => {
+            const totalItems = getTotalItems();
+            if (currentInteriorIndex >= totalItems + 1) {
+                currentInteriorIndex = 1;
+                interiorTrack.scrollTo({
+                    left: currentInteriorIndex * itemWidth,
+                    behavior: 'auto'
+                });
+            }
+            if (currentInteriorIndex <= 0) {
+                currentInteriorIndex = totalItems;
+                interiorTrack.scrollTo({
+                    left: currentInteriorIndex * itemWidth,
+                    behavior: 'auto'
+                });
+            }
             isScrolling = false;
             updateCurrentIndex();
         }, 300);
@@ -348,7 +598,7 @@ if (interiorTrack) {
     let isAutoScrolling = false;
     
     const goToNext = () => {
-        if (isScrolling && !isAutoScrolling) return;
+        if (isScrolling) return;
         isScrolling = true;
         isAutoScrolling = true;
         
@@ -359,13 +609,8 @@ if (interiorTrack) {
             return;
         }
         
-        const maxIndex = getMaxIndex();
-        
-        if (currentInteriorIndex < maxIndex) {
-            currentInteriorIndex++;
-        } else {
-            currentInteriorIndex = 0;
-        }
+        const totalItems = getTotalItems();
+        currentInteriorIndex++;
         
         interiorTrack.scrollTo({
             left: currentInteriorIndex * itemWidth,
@@ -373,10 +618,17 @@ if (interiorTrack) {
         });
         
         setTimeout(() => {
+            if (currentInteriorIndex >= totalItems + 1) {
+                currentInteriorIndex = 1;
+                interiorTrack.scrollTo({
+                    left: currentInteriorIndex * itemWidth,
+                    behavior: 'auto'
+                });
+            }
             isScrolling = false;
             isAutoScrolling = false;
             updateCurrentIndex();
-        }, 400); // Увеличил время для более плавной работы
+        }, 400);
     };
 
     if (interiorNext) {
@@ -386,54 +638,91 @@ if (interiorTrack) {
         });
     }
 
-    if (interiorPrev) {
-        interiorPrev.addEventListener('click', () => {
-            if (isScrolling) return;
-            isScrolling = true;
-            
-            const itemWidth = getItemWidth();
-            const maxIndex = getMaxIndex();
-            
-            if (currentInteriorIndex > 0) {
-                currentInteriorIndex--;
+    const goToPrev = () => {
+        if (isScrolling) return;
+        isScrolling = true;
+        
+        const itemWidth = getItemWidth();
+        if (itemWidth === 0) {
+            isScrolling = false;
+            return;
+        }
+        
+        const totalItems = getTotalItems();
+        currentInteriorIndex--;
+        
+        interiorTrack.scrollTo({
+            left: currentInteriorIndex * itemWidth,
+            behavior: 'smooth'
+        });
+        
+        setTimeout(() => {
+            if (currentInteriorIndex <= 0) {
+                currentInteriorIndex = totalItems;
                 interiorTrack.scrollTo({
                     left: currentInteriorIndex * itemWidth,
-                    behavior: 'smooth'
-                });
-            } else {
-                currentInteriorIndex = maxIndex;
-                interiorTrack.scrollTo({
-                    left: currentInteriorIndex * itemWidth,
-                    behavior: 'smooth'
+                    behavior: 'auto'
                 });
             }
-            
-            setTimeout(() => {
-                isScrolling = false;
-                updateCurrentIndex();
-            }, 300);
+            isScrolling = false;
+            updateCurrentIndex();
+        }, 400);
+    };
+
+    if (interiorPrev) {
+        interiorPrev.addEventListener('click', () => {
+            goToPrev();
             resetAutoSlide();
         });
     }
     
-    // Авто-прокрутка
+    if (interiorNavPrev) {
+        interiorNavPrev.addEventListener('click', () => {
+            goToPrev();
+            resetAutoSlide();
+        });
+    }
+    
+    if (interiorNavNext) {
+        interiorNavNext.addEventListener('click', () => {
+            goToNext();
+            resetAutoSlide();
+        });
+    }
+    
+    // Авто-прокрутка каждые 2 секунды
     const startAutoSlide = () => {
         autoSlideInterval = setInterval(() => {
             goToNext();
-        }, 1500); // каждые 1.5 секунды
+        }, 2000);
     };
     
+    let autoSlideResumeTimeout = null;
+    
     const resetAutoSlide = () => {
-        if (autoSlideInterval) {
-            clearInterval(autoSlideInterval);
+        // Останавливаем автопрокрутку
+        stopAutoSlide();
+        
+        // Очищаем предыдущий таймер возобновления, если есть
+        if (autoSlideResumeTimeout) {
+            clearTimeout(autoSlideResumeTimeout);
         }
-        startAutoSlide();
+        
+        // Возобновляем автопрокрутку через 2 секунды бездействия
+        autoSlideResumeTimeout = setTimeout(() => {
+            startAutoSlide();
+        }, 2000);
     };
     
     const stopAutoSlide = () => {
         if (autoSlideInterval) {
             clearInterval(autoSlideInterval);
             autoSlideInterval = null;
+        }
+        // Очищаем таймер возобновления при остановке
+        if (autoSlideResumeTimeout) {
+            clearTimeout(autoSlideResumeTimeout);
+            autoSlideResumeTimeout = null;
         }
     };
     
@@ -449,12 +738,10 @@ if (interiorTrack) {
         isUserInteracting = true;
         stopAutoSlide();
         
-        // Очищаем предыдущий таймаут
         if (interactionTimeout) {
             clearTimeout(interactionTimeout);
         }
         
-        // Возобновляем автопрокрутку через 3 секунды после окончания взаимодействия
         interactionTimeout = setTimeout(() => {
             isUserInteracting = false;
             if (!isUserInteracting) {
@@ -463,17 +750,15 @@ if (interiorTrack) {
         }, 3000);
     };
     
-    // Обработка касаний (мобильные устройства)
     interiorTrack.addEventListener('touchstart', handleUserInteraction);
     interiorTrack.addEventListener('touchmove', handleUserInteraction);
     interiorTrack.addEventListener('touchend', () => {
         handleUserInteraction();
     });
     
-    // Обработка зажатия мышью (десктоп)
     interiorTrack.addEventListener('mousedown', handleUserInteraction);
     interiorTrack.addEventListener('mousemove', (e) => {
-        if (e.buttons === 1) { // Левая кнопка мыши зажата
+        if (e.buttons === 1) {
             handleUserInteraction();
         }
     });
@@ -485,23 +770,25 @@ if (interiorTrack) {
     let scrollTimeout;
     let lastScrollLeft = 0;
     interiorTrack.addEventListener('scroll', () => {
-        // Проверяем, действительно ли произошел скролл
         if (interiorTrack.scrollLeft === lastScrollLeft) return;
         lastScrollLeft = interiorTrack.scrollLeft;
         
+        if (isAutoScrolling) return;
+        
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
-            updateCurrentIndex();
-        }, 100); // Увеличил задержку для более стабильной работы
+            if (!isAutoScrolling) {
+                updateCurrentIndex();
+            }
+        }, 150);
         
-        // Если пользователь скроллит (не автопрокрутка), приостанавливаем автопрокрутку
         if (!isUserInteracting && !isAutoScrolling) {
             handleUserInteraction();
         }
     });
     
-    // Инициализация точек
-    updateDots();
+    // Инициализация при загрузке
+    initInfiniteSlider();
     
     // Запускаем авто-прокрутку
     startAutoSlide();
@@ -511,12 +798,7 @@ if (interiorTrack) {
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            const itemWidth = getItemWidth();
-            interiorTrack.scrollTo({
-                left: currentInteriorIndex * itemWidth,
-                behavior: 'auto'
-            });
-            updateDots();
+            initInfiniteSlider();
         }, 250);
     });
 }
@@ -548,31 +830,35 @@ faqItems.forEach(item => {
 
 // Яндекс карта
 function initMap() {
+    const mapContainer = document.getElementById('yandex-map');
+    if (!mapContainer) return;
+
     if (typeof ymaps !== 'undefined') {
         ymaps.ready(function () {
             const map = new ymaps.Map('yandex-map', {
-                center: [64.5622, 39.8302], // Координаты Северодвинска, Беломорский проспект, 35
-                zoom: 16,
+                center: [64.5622, 39.8302],
+                zoom: 18,
                 controls: ['zoomControl', 'fullscreenControl']
             });
 
-            // Отключаем все лишние слои и элементы
             map.behaviors.disable('scrollZoom');
-            
-            // Убираем метку такси и другие лишние элементы
             map.options.set('suppressMapOpenBlock', true);
 
-            // Добавляем только одну метку
+            const svgIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#2d5016"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 11.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 8.5 12 8.5s2.5 1.12 2.5 2.5S13.38 13.5 12 13.5z"/></svg>';
+            const iconDataUri = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgIcon);
+
             const placemark = new ymaps.Placemark([64.5622, 39.8302], {
                 balloonContent: 'Аромацентр "Вербена"<br>Беломорский проспект, 35'
             }, {
-                preset: 'islands#greenDotIcon'
+                iconLayout: 'default#image',
+                iconImageHref: iconDataUri,
+                iconImageSize: [64, 64],
+                iconImageOffset: [-32, -64]
             });
 
             map.geoObjects.add(placemark);
         });
     } else {
-        // Если API не загружен, показываем заглушку
         const mapContainer = document.getElementById('yandex-map');
         if (mapContainer) {
             mapContainer.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f1f8e9; color: #2d5016; font-size: 1.2rem;">Карта загружается...</div>';
@@ -627,7 +913,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         
         const target = document.querySelector(targetId);
         if (target) {
-            const offsetTop = target.offsetTop - 80; // Учитываем высоту меню
+            const offsetTop = target.offsetTop - 80;
             window.scrollTo({
                 top: offsetTop,
                 behavior: 'smooth'
@@ -655,34 +941,33 @@ if (scrollToTop) {
     });
 }
 
-// Обработка длинных отзывов - добавление "Читать полностью"
+// Обработка длинных отзывов - добавление "Читать полностью" (для всех разрешений)
 function initReviewReadMore() {
     const reviewTexts = document.querySelectorAll('.review-text');
     reviewTexts.forEach(reviewText => {
-        // Пропускаем, если уже есть кнопка "Читать полностью"
-        if (reviewText.nextElementSibling && reviewText.nextElementSibling.classList.contains('review-read-more')) {
-            return;
+        // Удаляем старую кнопку если есть
+        const oldReadMore = reviewText.nextElementSibling;
+        if (oldReadMore && oldReadMore.classList.contains('review-read-more')) {
+            oldReadMore.remove();
         }
         
-        // Проверяем, обрезан ли текст (scrollHeight больше clientHeight)
-        if (reviewText.scrollHeight > reviewText.clientHeight + 5) {
-            const readMore = document.createElement('span');
-            readMore.className = 'review-read-more';
-            readMore.textContent = 'Читать полностью...';
-            
-            readMore.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (reviewText.classList.contains('review-text-full')) {
-                    reviewText.classList.remove('review-text-full');
-                    readMore.textContent = 'Читать полностью...';
-                } else {
-                    reviewText.classList.add('review-text-full');
-                    readMore.textContent = 'Свернуть';
-                }
-            });
-            
-            reviewText.parentNode.insertBefore(readMore, reviewText.nextSibling);
-        }
+        // Добавляем кнопку на всех разрешениях
+        const readMore = document.createElement('span');
+        readMore.className = 'review-read-more';
+        readMore.textContent = 'Читать полностью...';
+        
+        readMore.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (reviewText.classList.contains('review-text-full')) {
+                reviewText.classList.remove('review-text-full');
+                readMore.textContent = 'Читать полностью...';
+            } else {
+                reviewText.classList.add('review-text-full');
+                readMore.textContent = 'Свернуть';
+            }
+        });
+        
+        reviewText.parentNode.insertBefore(readMore, reviewText.nextSibling);
     });
 }
 
@@ -697,10 +982,8 @@ window.addEventListener('resize', () => {
     setTimeout(initReviewReadMore, 100);
 });
 
-// Re-initialize after slider movement to ensure buttons are correctly added/removed
 if (reviewsTrack) {
     reviewsTrack.addEventListener('scroll', () => {
-        // Debounce to avoid excessive calls during scroll
         clearTimeout(window.reviewReadMoreTimeout);
         window.reviewReadMoreTimeout = setTimeout(initReviewReadMore, 100);
     });

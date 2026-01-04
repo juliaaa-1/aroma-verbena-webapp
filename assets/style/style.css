@@ -16,6 +16,7 @@
     --text-light: #666;
     --white: #ffffff;
     --shadow: rgba(45, 80, 22, 0.1);
+    --content-width: 80%;
 }
 
 html {
@@ -28,12 +29,18 @@ body {
     color: var(--text-dark);
     background-color: var(--white);
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
 }
 
 .container {
-    max-width: 1200px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Бургер меню */
@@ -163,12 +170,11 @@ body {
     border-bottom-color: var(--green-accent);
 }
 
-/* Баннер */
+/* Баннер - 100% ширины и высоты экрана */
 .banner {
     position: relative;
-    width: 100%;
+    width: 100vw;
     height: 100vh;
-    min-height: 600px;
     background: url('../image/интерьер/interior1.jpg') center/cover no-repeat;
     display: flex;
     align-items: center;
@@ -259,6 +265,7 @@ body {
 /* Секции */
 section {
     padding: 80px 0;
+    width: 100%;
 }
 
 .section-title {
@@ -271,16 +278,18 @@ section {
     line-height: 1.2;
 }
 
-
-/* О Марии */
+/* О Марии - 90% ширины */
 .about {
     background: var(--green-bg);
 }
 
 .about-content {
-    max-width: 1200px;
+    width: var(--content-width);
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .about-title {
@@ -288,6 +297,7 @@ section {
     color: var(--green-primary);
     margin-bottom: 40px;
     text-align: center;
+    width: 100%;
 }
 
 .about-wrapper {
@@ -295,6 +305,7 @@ section {
     align-items: flex-start;
     gap: 40px;
     justify-content: center;
+    width: 100%;
 }
 
 .about-image {
@@ -302,7 +313,6 @@ section {
     width: 400px;
     max-width: 100%;
     overflow: hidden;
-    align-self: flex-start;
 }
 
 .about-image img {
@@ -320,8 +330,7 @@ section {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    align-self: flex-start;
-    max-height: 100%;
+    max-width: 70%;
 }
 
 .about-intro {
@@ -350,7 +359,7 @@ section {
     margin-bottom: 4px;
 }
 
-/* Цитата */
+/* Цитата - 90% ширины, на ПК фото слева текст справа */
 .quote {
     background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-light) 100%);
     color: var(--white);
@@ -358,14 +367,16 @@ section {
 }
 
 .quote-content {
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
-    gap: 30px;
+    gap: 40px;
 }
 
 .quote-image {
+    flex: 0 0 auto;
     width: 150px;
     height: 150px;
     border-radius: 50%;
@@ -381,39 +392,41 @@ section {
 }
 
 .quote-text {
+    flex: 1;
     font-size: 1.5rem;
     font-style: italic;
     line-height: 1.8;
-    max-width: 800px;
     margin: 0;
     padding: 0;
     border: none;
+    text-align: left;
+    max-width: 90%;
 }
 
-/* Услуги */
+/* Услуги - 90% ширины, кнопки с отступом 5px */
 .services {
     background: var(--white);
     padding-bottom: 20px;
 }
 
 .services .section-title {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .services-slider {
     position: relative;
-    max-width: 1200px;
+    width: var(--content-width);
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 60px;
 }
 
 .services-track {
+    width: 100%;
     display: flex;
     gap: 30px;
     overflow-x: hidden;
     scroll-behavior: smooth;
     padding: 20px 0;
-    scroll-snap-type: x mandatory;
 }
 
 .service-card {
@@ -425,7 +438,30 @@ section {
     box-shadow: 0 5px 20px var(--shadow);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
-    scroll-snap-align: start;
+}
+
+/* Планшет: 2 карточки */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .service-card {
+        min-width: calc(50% - 15px);
+        flex: 0 0 calc(50% - 15px);
+    }
+}
+
+/* Мобильный и средние экраны: 1 карточка до 768px */
+@media (max-width: 768px) {
+    .services-track {
+        gap: 0;
+        padding: 20px 0;
+        overflow-x: hidden; /* Убираем скролл */
+        scroll-behavior: smooth;
+    }
+    
+    .service-card {
+        min-width: 100%;
+        flex: 0 0 100%;
+        margin-right: 0;
+    }
 }
 
 .service-card:hover {
@@ -462,8 +498,8 @@ section {
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    z-index: 10;
     box-shadow: 0 5px 15px var(--shadow);
+    z-index: 10;
 }
 
 .slider-btn:hover {
@@ -472,22 +508,39 @@ section {
 }
 
 .slider-btn-prev {
-    left: 10px;
+    left: -47px;
 }
 
 .slider-btn-next {
-    right: 10px;
+    right: -47px;
+}
+
+/* Специальное позиционирование для кнопок слайдеров с отступом 7px */
+.services-slider .slider-btn-prev {
+    left: -47px;
+}
+
+.services-slider .slider-btn-next {
+    right: -47px;
+}
+
+.reviews-slider .slider-btn-prev {
+    left: -47px;
+}
+
+.reviews-slider .slider-btn-next {
+    right: -47px;
 }
 
 .interior-slider .slider-btn-prev {
-    left: 30px;
+    left: -47px;
 }
 
 .interior-slider .slider-btn-next {
-    right: 30px;
+    right: -47px;
 }
 
-/* Интерьер */
+/* Интерьер - 90% ширины, кнопки с отступом 5px */
 .interior {
     background: var(--white);
     padding: 80px 0;
@@ -497,30 +550,15 @@ section {
     margin-bottom: 30px;
 }
 
-.interior-wrapper {
-    background: var(--green-bg);
-    width: 100%;
-    padding: 80px 0 60px 0;
-}
-
-.interior .container {
-    background: transparent;
-    padding: 0 20px;
-    border-radius: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 .interior-slider {
     position: relative;
-    max-width: 1200px;
+    width: var(--content-width);
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 120px;
-    width: 100%;
 }
 
 .interior-track {
+    width: 100%;
     display: flex;
     gap: 20px;
     overflow-x: hidden;
@@ -544,25 +582,11 @@ section {
     display: block;
 }
 
-.interior-slider .slider-btn {
-    background: var(--green-primary);
-    border: none;
-}
-
-.interior-slider .slider-btn:hover {
-    background: var(--green-light);
-}
-
 .interior-dots {
     display: none;
     justify-content: center;
     gap: 6px;
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    padding: 10px 0;
+    margin-top: 20px;
 }
 
 .interior-dot {
@@ -581,227 +605,60 @@ section {
     height: 10px;
 }
 
-/* Отзывы */
-.reviews {
-    background: var(--white);
-    padding-top: 25px;
-}
-
-.reviews .section-title {
-    margin-bottom: 30px;
-}
-
-.reviews-slider {
-    position: relative;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 80px;
-    display: flex;
-    flex-direction: column;
-}
-
-.reviews-slider-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 0;
-    padding-top: 20px;
-    order: 2;
-    flex-shrink: 0;
-}
-
-.reviews-slider .slider-btn {
-    position: static;
-    transform: none;
-    margin: 0;
-}
-
-.reviews-slider .slider-btn-prev {
-    left: auto;
-}
-
-.reviews-slider .slider-btn-next {
-    right: auto;
-}
-
-.reviews-slider-wrapper {
-    position: relative;
-    display: flex;
-    align-items: flex-start;
-    gap: 0;
-}
-
-.reviews-slider-wrapper .reviews-track {
-    flex: 1;
-    display: flex;
-    align-items: flex-start;
-}
-
-.reviews-slider-wrapper .reviews-slider-buttons {
-    position: absolute;
-    left: -60px;
-    right: -60px;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: 0;
-    justify-content: space-between;
-    pointer-events: none;
-    z-index: 10;
-}
-
-.reviews-slider-wrapper .reviews-slider-buttons .slider-btn {
-    position: relative;
-    pointer-events: all;
-    transform: none;
-}
-
-.reviews-track {
-    display: flex;
-    align-items: flex-start;
-    gap: 30px;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    padding: 0;
-    scroll-snap-type: x mandatory;
-    order: 1;
-}
-
-.review-card {
-    min-width: 100%;
-    flex: 0 0 100%;
-    background: var(--green-bg);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 5px 20px var(--shadow);
-    scroll-snap-align: start;
-    display: flex;
-    flex-direction: column;
-    align-self: flex-start;
-    margin-bottom: 0;
-}
-
-.review-next-mobile {
+.interior-nav-buttons {
     display: none;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+    padding: 0 15px;
 }
 
-.review-header {
+/* Показываем кнопки интерьера на мобильных */
+@media (max-width: 600px) {
+    .interior-nav-buttons {
+        display: flex !important;
+    }
+}
+
+.interior-nav-btn {
+    background: none;
+    border: 2px solid var(--green-primary);
+    border-radius: 50%;
+    color: var(--green-primary);
+    cursor: pointer;
+    padding: 10px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.review-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--green-accent);
-}
-
-.review-name {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--green-primary);
-}
-
-.review-text {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: var(--text-light);
-    font-style: italic;
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 8;
-    line-clamp: 8;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    position: relative;
-}
-
-.review-text-full {
-    display: block;
-    -webkit-line-clamp: unset;
-    line-clamp: unset;
-}
-
-.review-read-more {
-    color: var(--text-light);
-    opacity: 0.6;
-    font-size: 0.95rem;
-    font-style: normal;
-    margin-top: 4px;
-    margin-bottom: -10px;
-    cursor: pointer;
-    display: inline-block;
-    transition: opacity 0.3s ease;
-}
-
-.review-read-more:hover {
-    opacity: 0.8;
-}
-
-.reviews-more {
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 0;
-    width: 100%;
-    max-width: 100%;
-    flex-shrink: 0;
-    align-self: stretch;
-}
-
-.reviews-more p {
-    font-size: 1.1rem;
-    color: var(--text-light);
-}
-
-.reviews-link {
-    color: var(--green-primary);
-    text-decoration: none;
-    font-weight: 600;
-    border-bottom: 2px solid var(--green-accent);
+    justify-content: center;
     transition: all 0.3s ease;
-    position: relative;
-    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.reviews-link:hover {
-    color: var(--green-light);
-    transform: translateY(-2px);
-    border-bottom-color: var(--green-light);
+.interior-nav-btn:hover {
+    background: var(--green-primary);
+    color: var(--white);
+    transform: scale(1.05);
 }
 
-.reviews-link::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--green-light);
-    transition: width 0.3s ease;
-}
-
-.reviews-link:hover::after {
-    width: 100%;
-}
-
-/* ЧаВо */
+/* ЧаВо - 90% ширины */
 .faq {
     background: var(--green-bg);
 }
 
 .faq-list {
-    max-width: 800px;
+    width: var(--content-width);
+    max-width: 100%;
     margin: 0 auto;
+    padding: 0;
 }
 
 .faq-item {
     background: var(--white);
     border-radius: 15px;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
     box-shadow: 0 3px 15px var(--shadow);
     overflow: hidden;
     transition: all 0.3s ease;
@@ -861,31 +718,201 @@ section {
     font-size: 1rem;
 }
 
-/* Карта */
-.map-section {
+/* Отзывы - 90% ширины карточки, кнопки с отступом 5px */
+.reviews {
     background: var(--white);
+    padding-top: 25px;
 }
 
-/* Скрываем логотип API Яндекс.Карт и метку такси, но оставляем "Как добраться" */
-#yandex-map .ymaps-2-1-79-copyrights-pane,
-#yandex-map .ymaps-2-1-79-copyright__content,
-#yandex-map .ymaps-2-1-79-copyright,
-#yandex-map .ymaps-2-1-79-traffic,
-#yandex-map .ymaps-2-1-79-controls__control_taxi,
-#yandex-map [class*="copyright"]:not([class*="route"]):not([class*="directions"]):not([class*="control_route"]),
-#yandex-map [class*="traffic"],
-#yandex-map [class*="taxi"]:not([class*="route"]) {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+.reviews .section-title {
+    margin-bottom: 20px;
+}
+
+.reviews-slider {
+    position: relative;
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.reviews-track {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 20px 0;
+    scroll-snap-type: x mandatory;
+}
+
+.review-card {
+    min-width: 100%;
+    flex: 0 0 100%;
+    background: var(--green-bg);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 5px 20px var(--shadow);
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.review-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--green-accent);
+}
+
+.review-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--green-primary);
+}
+
+.review-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    font-style: italic;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Показываем только 4 строчки по умолчанию */
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: calc(1.8em * 4);
+}
+
+.review-text-full {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+}
+
+.review-read-more {
+    color: var(--green-primary);
+    opacity: 1;
+    font-size: 0.95rem;
+    font-style: normal;
+    margin-top: 6px;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    display: inline-block; /* Показываем на всех разрешениях */
+    transition: opacity 0.3s ease;
+}
+
+.review-read-more:hover {
+    color: var(--green-light);
+    opacity: 1;
+}
+
+/* Кнопки листания внутри карточки отзыва */
+.review-card-nav {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: none; /* Скрываем на ПК по умолчанию */
+    gap: 10px;
+    z-index: 10;
+}
+
+/* Показываем кнопки навигации внутри карточек на мобильных (756px и меньше) */
+@media (max-width: 756px) {
+    .review-card-nav {
+        display: flex !important;
+    }
+    
+    /* Скрываем внешние боковые кнопки слайдера отзывов */
+    .reviews-slider .slider-btn {
+        display: none !important;
+    }
+}
+
+.review-card-nav-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--green-primary);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px var(--shadow);
+}
+
+.review-card-nav-btn:hover {
+    background: var(--green-light);
+    transform: scale(1.1);
+}
+
+.review-card-nav-btn:active {
+    transform: scale(0.95);
+}
+
+.reviews-more {
+    text-align: center;
+    margin-top: 20px;
+    width: var(--content-width);
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.reviews-more p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+}
+
+.reviews-link {
+    color: var(--green-primary);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 2px solid var(--green-accent);
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+
+.reviews-link:hover {
+    color: var(--green-light);
+    transform: translateY(-2px);
+    border-bottom-color: var(--green-light);
+}
+
+/* Карта - 90% ширины */
+.map-section {
+    background: var(--white);
+    padding-top: 40px;
+    padding-bottom: clamp(24px, 3vh, 48px);
+}
+
+.map-section .section-title {
+    margin-bottom: 30px;
 }
 
 .map-container {
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto 20px;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 5px 20px var(--shadow);
-    margin-bottom: 20px;
 }
 
 .map-address {
@@ -893,9 +920,13 @@ section {
     font-size: 1.2rem;
     color: var(--green-primary);
     font-weight: 600;
+    padding-bottom: 3vh;
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
 }
 
-/* Футер */
+/* Футер - 90% ширины всех кнопок */
 .footer {
     background: var(--green-primary);
     color: var(--white);
@@ -904,12 +935,7 @@ section {
 
 .footer-content {
     text-align: center;
-}
-
-.footer-address {
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    opacity: 0.9;
+    width: 100%;
 }
 
 .footer-links {
@@ -917,10 +943,9 @@ section {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 15px;
-    max-width: 1200px;
+    width: var(--content-width);
+    max-width: 100%;
     margin: 0 auto;
-    width: 100%;
-    padding: 0 20px;
     justify-content: center;
 }
 
@@ -937,7 +962,8 @@ section {
     border-radius: 25px;
     transition: all 0.3s ease;
     border: 2px solid transparent;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .footer-link:hover {
@@ -976,14 +1002,10 @@ section {
     box-shadow: 0 8px 20px var(--shadow);
 }
 
-/* Адаптивность */
-@media (max-width: 1024px) {
+/* Адаптивность для планшетов (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
     .banner-title {
         font-size: 3rem;
-    }
-    
-    .about-content {
-        padding: 0 30px;
     }
     
     .about-wrapper {
@@ -994,64 +1016,30 @@ section {
     .about-image {
         width: 100%;
         max-width: 500px;
+    }
+    
+    .quote-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: var(--content-width);
+        max-width: 100%;
+    }
+    
+    .quote-image {
+        margin-bottom: 20px;
         align-self: center;
     }
     
-    .about-text-wrapper {
-        width: 100%;
-        max-height: none;
-    }
-    
-    .service-card {
-        min-width: calc(50% - 15px);
-        flex: 0 0 calc(50% - 15px);
-    }
-    
-    .services-slider {
-        padding: 0 60px;
-    }
-    
-    .reviews-slider {
-        padding: 0 100px;
-    }
-    
-    .reviews-slider-wrapper .reviews-slider-buttons {
-        position: absolute;
-        left: -80px;
-        right: -80px;
-        top: 50%;
-        transform: translateY(-50%);
-        margin: 0;
-        justify-content: space-between;
-        pointer-events: none;
-    }
-    
-    .reviews-slider-wrapper .reviews-slider-buttons .slider-btn {
-        position: relative;
-        pointer-events: all;
-        transform: none;
-    }
-    
-    .interior {
-        padding: 80px 0;
-    }
-    
-    .interior-wrapper {
-        padding: 80px 0 60px 0;
-    }
-    
-    .interior .container {
-        padding: 0 20px !important;
-    }
-    
-    .interior-slider {
-        padding: 0 120px;
-    }
-    
-    .footer-links {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
+    .quote-text {
+        text-align: left;
+        width: 90%;
+        max-width: 90%;
+        line-height: 1.5;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     .footer-link {
@@ -1060,6 +1048,7 @@ section {
     }
 }
 
+/* Адаптивность для мобильных (до 768px) */
 @media (max-width: 768px) {
     .banner-title {
         font-size: 2.5rem;
@@ -1069,12 +1058,12 @@ section {
         font-size: 1.2rem;
     }
     
-    /* Рамочка для баннера на планшетах и телефонах */
+    /* Рамочка для баннера на мобильных */
     .banner .banner-content {
-        padding: 20px;
+        padding: 20px 15px;
         margin: 0 auto;
-        max-width: calc(100% - 40px);
-        width: calc(100% - 40px);
+        max-width: calc(100% - 30px);
+        width: calc(100% - 30px);
         border: 2px solid rgba(255, 255, 255, 0.3);
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.1);
@@ -1091,10 +1080,6 @@ section {
         font-size: 1.2rem;
     }
     
-    .about-content {
-        padding: 0 20px;
-    }
-    
     .about-title {
         font-size: 1.8rem;
     }
@@ -1108,204 +1093,23 @@ section {
         max-width: 100%;
     }
     
-    .service-card {
-        min-width: 100%;
-        flex: 0 0 100%;
-    }
-    
     .services {
         padding-top: 60px;
         padding-bottom: 40px;
         background: var(--green-bg);
     }
     
-    .services-slider {
-        padding: 0 60px;
-    }
-    
-    .services-slider .slider-btn {
-        width: 30px;
-        height: 30px;
-    }
-    
-    .services-slider .slider-btn-prev {
-        left: 10px;
-    }
-    
-    .services-slider .slider-btn-next {
-        right: 10px;
-    }
-    
-    .reviews-slider {
-        padding: 0 20px 0;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 0;
-    }
-    
-    .reviews-slider-wrapper {
-        flex-direction: column;
-        align-items: stretch;
-        order: 1;
-    }
-    
-    .reviews-track {
-        order: 1;
-        padding: 0;
-        width: 100%;
-        margin-bottom: 0;
-    }
-    
-    .reviews-slider-wrapper .reviews-slider-buttons {
-        position: static;
-        transform: none;
-        order: 2;
-        margin-top: 0;
-        padding-top: 20px;
-        justify-content: center;
-        gap: 10px;
-        width: 100%;
-    }
-    
-    .reviews-more {
-        order: 3;
-        margin-top: 20px;
-        max-width: 100%;
-        padding: 0 20px;
-        box-sizing: border-box;
-    }
-    
-    .reviews-slider-wrapper .reviews-slider-buttons .slider-btn {
-        position: static;
-        transform: none;
-    }
-    
     .review-card {
-        padding: 35px 30px 120px 30px;
-        margin-bottom: 0;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-    
-    .review-card .review-text {
-        flex: 1;
-    }
-    
-    .review-read-more {
-        margin-top: 0;
-        margin-bottom: -15px;
-    }
-    
-    .review-next-mobile {
-        position: absolute;
-        bottom: 30px;
-        right: 15px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: none;
-        border: none;
-        color: var(--green-primary);
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        padding: 8px 12px;
-        transition: all 0.3s ease;
-    }
-    
-    .review-next-mobile:hover {
-        color: var(--green-light);
-        transform: translateX(5px);
-    }
-    
-    .review-next-mobile svg {
-        width: 18px;
-        height: 18px;
-    }
-    
-    .reviews-slider-wrapper .reviews-slider-buttons {
-        display: none;
+        padding: 23px 20px 40px 20px;
     }
     
     .review-text {
         line-height: 1.5;
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
     
     .review-header {
         margin-bottom: 15px;
-    }
-    
-    .interior {
-        padding: 50px 0;
-        overflow: hidden;
-    }
-    
-    .interior-wrapper {
-        background: var(--white) !important;
-        padding: 50px 0 0 0 !important;
-    }
-    
-    .interior .container {
-        padding: 0 !important;
-        background: transparent;
-        max-width: 100% !important;
-        width: 100% !important;
-        margin: 0 !important;
-    }
-    
-    .interior .section-title {
-        padding: 0 20px;
-    }
-    
-    .interior-slider {
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100vw !important;
-        width: 100vw !important;
-        position: relative;
-        left: 0 !important;
-        right: 0 !important;
-        transform: none !important;
-    }
-    
-    .interior-track {
-        gap: 0;
-        width: 100vw !important;
-        max-width: 100vw !important;
-    }
-    
-    .interior-item {
-        border-radius: 0;
-        box-shadow: none;
-        width: 100vw !important;
-        min-width: 100vw !important;
-        flex: 0 0 100vw !important;
-        max-width: 100vw !important;
-        position: relative;
-    }
-    
-    .interior-item img {
-        height: 300px;
-        border-radius: 0;
-        width: 100vw !important;
-        max-width: 100vw !important;
-        min-width: 100vw !important;
-        display: block;
-    }
-    
-    .interior-slider .slider-btn {
-        display: none;
-    }
-    
-    .interior-dots {
-        display: flex;
-        bottom: -18px;
-    }
-    
-    .interior-item {
-        margin-bottom: 25px;
     }
     
     .footer-links {
@@ -1329,22 +1133,10 @@ section {
     }
 }
 
-@media (max-width: 480px) {
+/* Адаптивность для маленьких мобильных (до 600px) */
+@media (max-width: 600px) {
     .banner {
         min-height: 500px;
-    }
-    
-    .banner .banner-content {
-        padding: 20px !important;
-        margin: 0 auto !important;
-        max-width: calc(100% - 40px) !important;
-        width: calc(100% - 40px) !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        border-radius: 20px !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
     }
     
     .banner-title {
@@ -1364,63 +1156,31 @@ section {
         font-size: 1.8rem;
     }
     
-    .about-content {
-        padding: 0 15px;
-    }
-    
     .about-title {
         font-size: 1.6rem;
     }
     
-    .about-image {
-        max-width: 100%;
+    .about-text-wrapper {
+        max-width: 90%;
+        margin: 0 auto;
+        text-align: left;
     }
     
-    .services-slider {
-        padding: 0 50px;
+    .about-intro {
+        text-align: left;
     }
     
-    .reviews-slider {
-        padding: 0 15px 0;
-        margin-bottom: 0;
+    .about-divider {
+        margin: 0 0 15px;
     }
     
-    .reviews-more {
-        max-width: 100%;
-        padding: 0 15px;
-        box-sizing: border-box;
-    }
-    
-    .review-card {
-        padding: 30px 25px 120px 25px;
-        margin-bottom: 0;
-        position: relative;
-    }
-    
-    .review-text {
-        -webkit-line-clamp: 6;
-        line-clamp: 6;
-    }
-    
-    .review-read-more {
-        margin-top: 0;
-        margin-bottom: -15px;
-    }
-    
-    .review-next-mobile {
-        bottom: 25px;
-        right: 10px;
-        font-size: 0.9rem;
-    }
-    
-    .review-next-mobile svg {
-        width: 16px;
-        height: 16px;
+    .about-text {
+        text-align: left;
     }
     
     .review-text {
         line-height: 1.4;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
     
     .review-header {
@@ -1436,59 +1196,378 @@ section {
         font-size: 1.1rem;
     }
     
-    .interior {
-        overflow: hidden;
+    /* Цитата - такое же расположение как при 867px */
+    .quote-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: var(--content-width);
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
     }
     
-    .interior-wrapper {
-        background: var(--white) !important;
-        padding: 50px 0 0 0 !important;
+    .quote-image {
+        margin-bottom: 20px;
+        align-self: center;
     }
     
-    .interior .container {
-        padding: 0 !important;
-        background: transparent;
-        max-width: 100% !important;
-        width: 100% !important;
-        margin: 0 !important;
+    .quote-text {
+        text-align: left;
+        width: 90%;
+        max-width: 90%;
+        line-height: 1.5;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
     }
     
-    .interior .section-title {
-        padding: 0 15px;
-    }
-    
+    /* Интерьер на 100% ширины, кнопки снизу */
     .interior-slider {
-        padding: 0 !important;
-        margin: 0 !important;
-        max-width: 100vw !important;
-        width: 100vw !important;
-        left: 0 !important;
-        transform: none !important;
+        flex-direction: column;
+        width: 100%;
     }
     
     .interior-track {
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100%;
     }
     
     .interior-item {
-        width: 100vw !important;
-        min-width: 100vw !important;
-        flex: 0 0 100vw !important;
-        max-width: 100vw !important;
+        border-radius: 0;
+        box-shadow: none;
     }
     
     .interior-item img {
-        height: 250px;
-        width: 100vw !important;
-        max-width: 100vw !important;
-        min-width: 100vw !important;
+        height: 300px;
+        border-radius: 0;
+    }
+    
+    .interior-slider .slider-btn {
+        display: none;
+    }
+    
+    .interior-nav-buttons {
+        display: flex !important;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 15px;
+        margin-top: 15px;
+    }
+    
+    .interior-nav-btn {
+        background: var(--white);
+        border: 2px solid var(--green-primary);
+        border-radius: 50%;
+        color: var(--green-primary);
+        cursor: pointer;
+        padding: 8px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+    }
+    
+    .interior-nav-btn:hover,
+    .interior-nav-btn:active {
+        background: var(--green-primary);
+        border-color: var(--green-primary);
+        color: var(--white);
+        transform: scale(1.05);
+    }
+    
+    /* Кнопки слайдеров услуг на мобильных */
+    .services-slider {
+        width: 75%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .services-track {
+        justify-content: flex-start;
+        align-items: stretch;
+        overflow-x: hidden; /* Убираем скролл */
+        touch-action: pan-y; /* Разрешаем только вертикальный скролл страницы */
+    }
+    
+    .services-slider .slider-btn {
+        display: flex;
+        width: 35px;
+        height: 35px;
+    }
+    
+    .services-slider .slider-btn-prev {
+        left: -38px;
+    }
+    
+    .services-slider .slider-btn-next {
+        right: -38px;
+    }
+    
+    /* Возвращаем кнопки слайдеров отзывов на мобильных */
+    .reviews-slider {
+        width: 85%;
+    }
+    
+    .review-card {
+        min-width: calc(100% - 20px);
+        flex: 0 0 calc(100% - 20px);
+    }
+    
+    /* Карта на 100% ширины */
+    .map-container {
+        width: 100%;
+        border-radius: 0;
+    }
+    
+    .map-section {
+        padding-left: 0;
+        padding-right: 0;
     }
     
     .slider-btn {
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
     }
 }
 
+/* Уменьшаем межстрочный интервал в ЧАВО для маленьких экранов */
+@media (max-width: 420px) {
+    .faq-answer p {
+        line-height: 1.5;
+    }
+}
+
+/* Уменьшаем размер заголовков для очень маленьких экранов */
+@media (max-width: 460px) {
+    .section-title {
+        font-size: 1.6rem;
+    }
+    
+    .banner-title {
+        font-size: 1.3rem !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .banner-subtitle {
+        font-size: 0.85rem !important;
+    }
+    
+    .about-title {
+        font-size: 1.4rem;
+    }
+    
+    .quote-text {
+        font-size: 1.1rem;
+        line-height: 1.4;
+    }
+}
+
+/* Исправление пустого пространства справа для диапазона 540-383px */
+@media (max-width: 540px) and (min-width: 384px) {
+    body {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100vw;
+    }
+    
+    html {
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100vw;
+        padding: 0;
+        margin: 0;
+    }
+    
+    section {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .about-content,
+    .quote-content,
+    .services-slider,
+    .interior-slider,
+    .faq-list,
+    .reviews-slider,
+    .map-container,
+    .footer-links {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+    }
+    
+    .services-slider {
+        width: 75%;
+        max-width: calc(100vw - 100px);
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .reviews-slider {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .interior-slider {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .interior-track {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item {
+        width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item img {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .map-container {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0;
+    }
+}
+
+/* Исправление пустого пространства справа для очень маленьких экранов */
+@media (max-width: 390px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    * {
+        max-width: 100%;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100vw;
+        padding: 0;
+        margin: 0;
+    }
+    
+    section {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .banner {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .about-content,
+    .quote-content,
+    .faq-list,
+    .map-container,
+    .footer-links {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+    }
+    
+    .services-slider {
+        width: 70%;
+        max-width: calc(100vw - 100px);
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .reviews-slider {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .interior-slider {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .interior-slider {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .interior-track {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item {
+        width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item img {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .map-container {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0;
+    }
+    
+    /* Кнопки услуг остаются видимыми, делаем блок еще поуже */
+    .services-slider {
+        width: 70%;
+    }
+    
+    .services-track {
+        overflow-x: hidden; /* Убираем скролл */
+        touch-action: pan-y; /* Разрешаем только вертикальный скролл страницы */
+    }
+    
+    .services-slider .slider-btn {
+        display: flex !important;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .services-slider .slider-btn-prev {
+        left: -36px;
+    }
+    
+    .services-slider .slider-btn-next {
+        right: -36px;
+    }
+    
+    .interior-nav-buttons {
+        padding: 0 10px;
+    }
+}
 
