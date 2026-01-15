@@ -23,6 +23,20 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Улучшенная плавность для всех слайдеров */
+* {
+    scroll-behavior: smooth !important;
+}
+
+/* Плавные переходы для элементов слайдеров */
+.service-card,
+.review-card,
+.interior-item {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
 body {
     font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     line-height: 1.6;
@@ -427,6 +441,7 @@ section {
     overflow-x: hidden;
     scroll-behavior: smooth;
     padding: 20px 0;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .service-card {
@@ -454,6 +469,7 @@ section {
         padding: 20px 0;
         overflow-x: hidden; /* Убираем скролл */
         scroll-behavior: smooth;
+        transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
     .service-card {
@@ -562,6 +578,7 @@ section {
     overflow-x: hidden;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .interior-item {
@@ -659,11 +676,12 @@ section {
     margin: 0 auto 20px;
     box-shadow: 0 3px 15px var(--shadow);
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .faq-item:hover {
     box-shadow: 0 5px 20px var(--shadow);
+    transform: translateY(-2px);
 }
 
 .faq-question {
@@ -680,7 +698,7 @@ section {
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .faq-question:hover {
@@ -689,7 +707,7 @@ section {
 
 .faq-icon {
     flex-shrink: 0;
-    transition: transform 0.3s ease;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .faq-item.active .faq-icon {
@@ -699,15 +717,16 @@ section {
 .faq-answer {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), padding 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
     padding: 0 25px;
     opacity: 0;
+    /* Transition теперь управляется через JavaScript для разных скоростей */
 }
 
 .faq-item.active .faq-answer {
     max-height: 1000px;
     padding: 20px 25px 25px;
     opacity: 1;
+    /* Transition теперь управляется через JavaScript для разных скоростей */
 }
 
 .faq-answer p {
@@ -741,6 +760,7 @@ section {
     overflow-x: hidden;
     scroll-behavior: smooth;
     padding: 20px 0;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .review-card {

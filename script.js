@@ -67,93 +67,89 @@ const servicesPrev = document.getElementById('servicesPrev');
 if (servicesTrack && servicesNext) {
     let currentServiceIndex = 0;
     let isScrolling = false;
-    
+
     const getCardsPerView = () => {
         if (window.innerWidth <= 768) return 1;  // До 768px - 1 карточка
         if (window.innerWidth <= 1024) return 2; // От 769px до 1024px - 2 карточки
         return 3; // Свыше 1024px - 3 карточки
     };
-    
+
     const getCardWidth = () => {
         const cardsPerView = getCardsPerView();
         const trackWidth = servicesTrack.offsetWidth;
-        
+
         // Для мобильных (1 карточка) возвращаем полную ширину трека
         if (cardsPerView === 1) {
             return trackWidth;
         }
-        
+
         // Для планшетов и ПК: ширина карточки + gap
         const gap = 30;
         return (trackWidth - (gap * (cardsPerView - 1))) / cardsPerView + gap;
     };
-    
+
     const getTotalCards = () => {
         return document.querySelectorAll('.service-card').length;
     };
-    
+
     const getMaxIndex = () => {
         const totalCards = getTotalCards();
         const cardsPerView = getCardsPerView();
         return Math.max(0, totalCards - cardsPerView);
     };
-    
+
     // Плавное бесконечное листание вперед
     const goToNext = () => {
         if (isScrolling) return;
         isScrolling = true;
-        
+
         const cardWidth = getCardWidth();
         const maxIndex = getMaxIndex();
-        
-        if (currentServiceIndex >= maxIndex) {
-            // Плавно переходим к началу
-            currentServiceIndex = 0;
-        } else {
-            currentServiceIndex++;
-        }
-        
+
+        // Плавный переход к следующему слайду
+        const nextIndex = currentServiceIndex >= maxIndex ? 0 : currentServiceIndex + 1;
+
         servicesTrack.scrollTo({
-            left: currentServiceIndex * cardWidth,
+            left: nextIndex * cardWidth,
             behavior: 'smooth'
         });
-        
+
+        currentServiceIndex = nextIndex;
+
         setTimeout(() => {
             isScrolling = false;
-        }, 400);
+        }, 800);
     };
-    
+
     // Плавное бесконечное листание назад
     const goToPrev = () => {
         if (isScrolling) return;
         isScrolling = true;
-        
+
         const cardWidth = getCardWidth();
         const maxIndex = getMaxIndex();
-        
-        if (currentServiceIndex <= 0) {
-            // Плавно переходим к концу
-            currentServiceIndex = maxIndex;
-        } else {
-            currentServiceIndex--;
-        }
-        
+
+        // Плавный переход к предыдущему слайду
+        const prevIndex = currentServiceIndex <= 0 ? maxIndex : currentServiceIndex - 1;
+
         servicesTrack.scrollTo({
-            left: currentServiceIndex * cardWidth,
+            left: prevIndex * cardWidth,
             behavior: 'smooth'
         });
-        
+
+        currentServiceIndex = prevIndex;
+
         setTimeout(() => {
             isScrolling = false;
-        }, 400);
+        }, 800);
     };
 
     servicesNext.addEventListener('click', goToNext);
-    
+
     if (servicesPrev) {
         servicesPrev.addEventListener('click', goToPrev);
     }
-    
+
     // Обновление при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
@@ -161,24 +157,24 @@ if (servicesTrack && servicesNext) {
         resizeTimeout = setTimeout(() => {
             const cardWidth = getCardWidth();
             const maxIndex = getMaxIndex();
-            
+
             // Корректируем индекс, если он выходит за пределы
             if (currentServiceIndex > maxIndex) {
                 currentServiceIndex = maxIndex;
             }
-            
+
             // Устанавливаем правильную позицию
             const scrollPosition = currentServiceIndex * cardWidth;
             servicesTrack.scrollTo({
                 left: scrollPosition,
                 behavior: 'auto'
             });
-            
+
             // Сбрасываем флаг скролла
             isScrolling = false;
         }, 250);
     });
-    
+
     // Инициализация: устанавливаем начальную позицию
     setTimeout(() => {
         servicesTrack.scrollTo({
@@ -197,62 +193,65 @@ const reviewsPrev = document.getElementById('reviewsPrev');
 if (reviewsTrack) {
     let currentReviewIndex = 0;
     let isScrolling = false;
-    
+
     // Получаем все карточки отзывов
     const getReviewCards = () => {
         return document.querySelectorAll('.review-card');
     };
-    
+
     // Получаем ширину одной карточки
     const getCardWidth = () => {
         return reviewsTrack.offsetWidth;
     };
-    
+
     // Переход к определенному отзыву
     const goToReview = (index) => {
         if (isScrolling) return;
-        
+
         const cards = getReviewCards();
         const totalCards = cards.length;
-        
+
         if (totalCards === 0) return;
-        
-        // Обеспечиваем циклическое листание
+
+        // Плавное циклическое листание
+        let targetIndex;
         if (index >= totalCards) {
-            currentReviewIndex = 0;
+            targetIndex = 0;
         } else if (index < 0) {
-            currentReviewIndex = totalCards - 1;
+            targetIndex = totalCards - 1;
         } else {
-            currentReviewIndex = index;
+            targetIndex = index;
         }
-        
+
         isScrolling = true;
         const cardWidth = getCardWidth();
-        
+
         reviewsTrack.scrollTo({
-            left: currentReviewIndex * cardWidth,
+            left: targetIndex * cardWidth,
             behavior: 'smooth'
         });
-        
+
+        currentReviewIndex = targetIndex;
+
         // Сворачиваем все отзывы при переключении
         collapseAllReviews();
-        
+
         setTimeout(() => {
             isScrolling = false;
             initReviewReadMore();
-        }, 400);
+        }, 800);
     };
-    
+
     // Следующий отзыв
     const nextReview = () => {
         goToReview(currentReviewIndex + 1);
     };
-    
+
     // Предыдущий отзыв
     const prevReview = () => {
         goToReview(currentReviewIndex - 1);
     };
-    
+
     // Сворачивание всех отзывов
     const collapseAllReviews = () => {
         document.querySelectorAll('.review-card').forEach(card => {
@@ -266,7 +265,7 @@ if (reviewsTrack) {
             }
         });
     };
-    
+
     // Добавление кнопок навигации в карточки (только для мобильных 756px и меньше)
     const addReviewCardButtons = () => {
         if (window.innerWidth > 756) {
@@ -275,7 +274,7 @@ if (reviewsTrack) {
             existingNavs.forEach(nav => nav.remove());
             return;
         }
-        
+
         const cards = getReviewCards();
         cards.forEach(card => {
             // Удаляем старые кнопки, если есть
@@ -283,10 +282,10 @@ if (reviewsTrack) {
             if (oldNav) {
                 oldNav.remove();
             }
-            
+
             const nav = document.createElement('div');
             nav.className = 'review-card-nav';
-            
+
             const prevBtn = document.createElement('button');
             prevBtn.className = 'review-card-nav-btn review-card-nav-prev';
             prevBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>';
@@ -295,7 +294,7 @@ if (reviewsTrack) {
                 e.stopPropagation();
                 prevReview();
             });
-            
+
             const nextBtn = document.createElement('button');
             nextBtn.className = 'review-card-nav-btn review-card-nav-next';
             nextBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
@@ -304,13 +303,13 @@ if (reviewsTrack) {
                 e.stopPropagation();
                 nextReview();
             });
-            
+
             nav.appendChild(prevBtn);
             nav.appendChild(nextBtn);
             card.appendChild(nav);
         });
     };
-    
+
     // Инициализация слайдера
     const initReviewSlider = () => {
         currentReviewIndex = 0;
@@ -321,7 +320,7 @@ if (reviewsTrack) {
         addReviewCardButtons();
         initReviewReadMore();
     };
-    
+
     // Обработчики внешних кнопок
     if (reviewsNext) {
         reviewsNext.addEventListener('click', (e) => {
@@ -330,7 +329,7 @@ if (reviewsTrack) {
             nextReview();
         });
     }
-    
+
     if (reviewsPrev) {
         reviewsPrev.addEventListener('click', (e) => {
             e.preventDefault();
@@ -338,10 +337,10 @@ if (reviewsTrack) {
             prevReview();
         });
     }
-    
+
     // Инициализация при загрузке
     initReviewSlider();
-    
+
     // Обновление при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
@@ -352,7 +351,7 @@ if (reviewsTrack) {
     });
 }
 
-// Слайдер интерьера - бесконечный, автопрокрутка каждые 2 секунды, без быстрого перехода
+// Слайдер интерьера - простое бесконечное листание, автопрокрутка каждые 3 секунды
 const interiorTrack = document.getElementById('interiorTrack');
 const interiorPrev = document.getElementById('interiorPrev');
 const interiorNext = document.getElementById('interiorNext');
@@ -361,29 +360,26 @@ const interiorNavPrev = document.getElementById('interiorNavPrev');
 const interiorNavNext = document.getElementById('interiorNavNext');
 
 if (interiorTrack) {
-    let currentInteriorIndex = 1;
+    let currentInteriorIndex = 0;
     let isScrolling = false;
     let autoSlideInterval = null;
-    
+
     const getItemWidth = () => {
         return interiorTrack.offsetWidth;
     };
-    
+
     const getTotalItems = () => {
-        return document.querySelectorAll('.interior-item:not(.interior-item-clone)').length;
+        return document.querySelectorAll('.interior-item').length;
     };
-    
-    // Упрощенная инициализация слайдера интерьера
-    const initInfiniteSlider = () => {
-        const items = Array.from(interiorTrack.querySelectorAll('.interior-item:not(.interior-item-clone)'));
-        if (items.length === 0) return;
-        
-        // Удаляем старые клоны если есть
-        interiorTrack.querySelectorAll('.interior-item-clone').forEach(clone => clone.remove());
-        
-        // Устанавливаем начальную позицию на первый элемент
+
+    // Простая инициализация слайдера интерьера
+    const initSlider = () => {
+        const totalItems = getTotalItems();
+        if (totalItems === 0) return;
+
+        // Устанавливаем начальную позицию
+        currentInteriorIndex = 0;
         const itemWidth = getItemWidth();
-        currentInteriorIndex = 1;
         if (itemWidth > 0) {
             interiorTrack.scrollTo({
                 left: 0,
@@ -392,134 +388,76 @@ if (interiorTrack) {
         }
         updateDots();
     };
-    
+
     const updateDots = () => {
         if (!interiorDots) return;
-        
+
         interiorDots.innerHTML = '';
-        
         const totalItems = getTotalItems();
-        
+
         for (let i = 0; i < totalItems; i++) {
             const dot = document.createElement('div');
             dot.className = 'interior-dot';
-            
-            const isActive = (currentInteriorIndex - 1) === i || (currentInteriorIndex === 0 && i === totalItems - 1) || (currentInteriorIndex === totalItems + 1 && i === 0);
-            
-            if (isActive) {
+
+            if (i === currentInteriorIndex) {
                 dot.classList.add('active');
             }
-            
+
             dot.addEventListener('click', () => {
-                scrollToIndex(i + 1);
+                scrollToIndex(i);
                 resetAutoSlide();
             });
-            
+
             interiorDots.appendChild(dot);
         }
     };
-    
-    const updateCurrentIndex = () => {
-        const itemWidth = getItemWidth();
-        if (itemWidth === 0) return;
-        
-        const scrollLeft = interiorTrack.scrollLeft;
-        const newIndex = Math.round(scrollLeft / itemWidth);
-        const totalItems = getTotalItems();
-        
-        if (newIndex !== currentInteriorIndex) {
-            if (newIndex === 0) {
-                currentInteriorIndex = totalItems;
-                interiorTrack.scrollTo({
-                    left: currentInteriorIndex * itemWidth,
-                    behavior: 'auto'
-                });
-            } else if (newIndex >= totalItems + 1) {
-                currentInteriorIndex = 1;
-                interiorTrack.scrollTo({
-                    left: currentInteriorIndex * itemWidth,
-                    behavior: 'auto'
-                });
-            } else {
-                currentInteriorIndex = newIndex;
-            }
-            updateDots();
-        }
-    };
-    
+
     const scrollToIndex = (index) => {
         if (isScrolling) return;
         isScrolling = true;
-        
+
         const itemWidth = getItemWidth();
         if (itemWidth === 0) {
             isScrolling = false;
             return;
         }
-        
+
         currentInteriorIndex = index;
-        
+
         interiorTrack.scrollTo({
             left: currentInteriorIndex * itemWidth,
             behavior: 'smooth'
         });
-        
-        setTimeout(() => {
-            const totalItems = getTotalItems();
-            if (currentInteriorIndex >= totalItems + 1) {
-                currentInteriorIndex = 1;
-                interiorTrack.scrollTo({
-                    left: currentInteriorIndex * itemWidth,
-                    behavior: 'auto'
-                });
-            }
-            if (currentInteriorIndex <= 0) {
-                currentInteriorIndex = totalItems;
-                interiorTrack.scrollTo({
-                    left: currentInteriorIndex * itemWidth,
-                    behavior: 'auto'
-                });
-            }
-            isScrolling = false;
-            updateCurrentIndex();
-        }, 300);
-    };
-    
-    let isAutoScrolling = false;
-    
-    const goToNext = () => {
-        if (isScrolling) return;
-        isScrolling = true;
-        isAutoScrolling = true;
-        
-        const itemWidth = getItemWidth();
-        if (itemWidth === 0) {
-            isScrolling = false;
-            isAutoScrolling = false;
-            return;
-        }
-        
-        const totalItems = getTotalItems();
-        
-        // Плавное бесконечное листание
-        if (currentInteriorIndex >= totalItems) {
-            currentInteriorIndex = 1; // Переходим к первому элементу
-        } else {
-            currentInteriorIndex++;
-        }
-        
-        interiorTrack.scrollTo({
-            left: currentInteriorIndex * itemWidth,
-            behavior: 'smooth'
-        });
-        
+
         setTimeout(() => {
             isScrolling = false;
-            isAutoScrolling = false;
-            updateCurrentIndex();
-        }, 400);
+            updateDots();
+        }, 800);
     };
 
+    const goToNext = () => {
+        if (isScrolling) return;
+
+        const totalItems = getTotalItems();
+        if (totalItems === 0) return;
+
+        // Простое циклическое листание
+        const nextIndex = (currentInteriorIndex + 1) % totalItems;
+        scrollToIndex(nextIndex);
+    };
+
+    const goToPrev = () => {
+        if (isScrolling) return;
+
+        const totalItems = getTotalItems();
+        if (totalItems === 0) return;
+
+        // Простое циклическое листание
+        const prevIndex = currentInteriorIndex === 0 ? totalItems - 1 : currentInteriorIndex - 1;
+        scrollToIndex(prevIndex);
+    };
+
+    // Обработчики кнопок
     if (interiorNext) {
         interiorNext.addEventListener('click', () => {
             goToNext();
@@ -527,109 +465,78 @@ if (interiorTrack) {
         });
     }
 
-    const goToPrev = () => {
-        if (isScrolling) return;
-        isScrolling = true;
-        
-        const itemWidth = getItemWidth();
-        if (itemWidth === 0) {
-            isScrolling = false;
-            return;
-        }
-        
-        const totalItems = getTotalItems();
-        
-        // Плавное бесконечное листание
-        if (currentInteriorIndex <= 1) {
-            currentInteriorIndex = totalItems; // Переходим к последнему элементу
-        } else {
-            currentInteriorIndex--;
-        }
-        
-        interiorTrack.scrollTo({
-            left: currentInteriorIndex * itemWidth,
-            behavior: 'smooth'
-        });
-        
-        setTimeout(() => {
-            isScrolling = false;
-            updateCurrentIndex();
-        }, 400);
-    };
-
     if (interiorPrev) {
         interiorPrev.addEventListener('click', () => {
             goToPrev();
             resetAutoSlide();
         });
     }
-    
+
     if (interiorNavPrev) {
         interiorNavPrev.addEventListener('click', () => {
             goToPrev();
             resetAutoSlide();
         });
     }
-    
+
     if (interiorNavNext) {
         interiorNavNext.addEventListener('click', () => {
             goToNext();
             resetAutoSlide();
         });
     }
-    
-    // Авто-прокрутка каждые 2 секунды
+
+    // Авто-прокрутка каждые 3 секунды
     const startAutoSlide = () => {
         autoSlideInterval = setInterval(() => {
             goToNext();
-        }, 2000);
+        }, 3000);
     };
-    
+
     let autoSlideResumeTimeout = null;
-    
+
     const resetAutoSlide = () => {
         // Останавливаем автопрокрутку
         stopAutoSlide();
-        
+
         // Очищаем предыдущий таймер возобновления, если есть
         if (autoSlideResumeTimeout) {
             clearTimeout(autoSlideResumeTimeout);
         }
-        
-        // Возобновляем автопрокрутку через 2 секунды бездействия
+
+        // Возобновляем автопрокрутку через 3 секунды бездействия
         autoSlideResumeTimeout = setTimeout(() => {
             startAutoSlide();
-        }, 2000);
+        }, 3000);
     };
-    
+
     const stopAutoSlide = () => {
         if (autoSlideInterval) {
             clearInterval(autoSlideInterval);
             autoSlideInterval = null;
         }
-        // Очищаем таймер возобновления при остановке
         if (autoSlideResumeTimeout) {
             clearTimeout(autoSlideResumeTimeout);
             autoSlideResumeTimeout = null;
         }
     };
-    
+
     // Останавливаем авто-прокрутку при наведении
     interiorTrack.addEventListener('mouseenter', stopAutoSlide);
     interiorTrack.addEventListener('mouseleave', startAutoSlide);
-    
+
     // Приостанавливаем автопрокрутку при взаимодействии пользователя
     let isUserInteracting = false;
     let interactionTimeout = null;
-    
+
     const handleUserInteraction = () => {
         isUserInteracting = true;
         stopAutoSlide();
-        
+
         if (interactionTimeout) {
             clearTimeout(interactionTimeout);
         }
-        
+
         interactionTimeout = setTimeout(() => {
             isUserInteracting = false;
             if (!isUserInteracting) {
@@ -637,80 +544,56 @@ if (interiorTrack) {
             }
         }, 3000);
     };
-    
+
     interiorTrack.addEventListener('touchstart', handleUserInteraction);
     interiorTrack.addEventListener('touchmove', handleUserInteraction);
-    interiorTrack.addEventListener('touchend', () => {
-        handleUserInteraction();
-    });
-    
+    interiorTrack.addEventListener('touchend', handleUserInteraction);
     interiorTrack.addEventListener('mousedown', handleUserInteraction);
-    interiorTrack.addEventListener('mousemove', (e) => {
-        if (e.buttons === 1) {
-            handleUserInteraction();
-        }
-    });
-    interiorTrack.addEventListener('mouseup', () => {
-        handleUserInteraction();
-    });
-    
-    // Упрощенное отслеживание скролла для интерьера
-    let scrollTimeout;
-    let lastScrollLeft = 0;
-    interiorTrack.addEventListener('scroll', () => {
-        if (interiorTrack.scrollLeft === lastScrollLeft) return;
-        lastScrollLeft = interiorTrack.scrollLeft;
-        
-        if (isAutoScrolling) return;
-        
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            if (!isAutoScrolling) {
-                updateDots();
-            }
-        }, 150);
-        
-        if (!isUserInteracting && !isAutoScrolling) {
-            handleUserInteraction();
-        }
-    });
-    
+
     // Инициализация при загрузке
-    initInfiniteSlider();
-    
+    initSlider();
+
     // Запускаем авто-прокрутку
     startAutoSlide();
-    
+
     // Обновление при изменении размера окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            initInfiniteSlider();
+            initSlider();
         }, 250);
     });
 }
 
-// Гармошка FAQ
+// Гармошка FAQ с разными скоростями открытия и закрытия
 const faqItems = document.querySelectorAll('.faq-item');
 
 faqItems.forEach(item => {
     const question = item.querySelector('.faq-question');
-    
+    const answer = item.querySelector('.faq-answer');
+
     question.addEventListener('click', () => {
         const isActive = item.classList.contains('active');
-        
-        // Закрываем все остальные
+
+        // Закрываем все остальные с быстрой анимацией
         faqItems.forEach(otherItem => {
-            if (otherItem !== item) {
+            if (otherItem !== item && otherItem.classList.contains('active')) {
+                const otherAnswer = otherItem.querySelector('.faq-answer');
+                // Быстрое закрытие
+                otherAnswer.style.transition = 'max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.3s ease, opacity 0.2s ease';
                 otherItem.classList.remove('active');
             }
         });
-        
+
         // Переключаем текущий
         if (isActive) {
+            // Быстрое закрытие текущего
+            answer.style.transition = 'max-height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.3s ease, opacity 0.2s ease';
             item.classList.remove('active');
         } else {
+            // Медленное плавное открытие
+            answer.style.transition = 'max-height 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), padding 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.6s ease 0.2s';
             item.classList.add('active');
         }
     });
@@ -792,13 +675,37 @@ if (window.Telegram && Telegram.WebApp) {
     Telegram.WebApp.setBackgroundColor('#ffffff');
 }
 
+// Обработчик для ссылки на Telegram
+document.addEventListener('DOMContentLoaded', function () {
+    const telegramLink = document.querySelector('a[href*="t.me/aroma_maria"]');
+    if (telegramLink) {
+        telegramLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            const tgUrl = 'https://t.me/aroma_maria';
+
+            if (window.Telegram && Telegram.WebApp) {
+                try {
+                    // Используем Telegram Web App API для открытия чата
+                    Telegram.WebApp.openTelegramLink(tgUrl);
+                } catch (err) {
+                    console.error('Error opening Telegram link:', err);
+                    window.open(tgUrl, '_blank');
+                }
+            } else {
+                // Fallback для обычных браузеров
+                window.open(tgUrl, '_blank');
+            }
+        });
+    }
+});
+
 // Плавная прокрутка для всех якорных ссылок
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
-        
+
         const target = document.querySelector(targetId);
         if (target) {
             const offsetTop = target.offsetTop - 80;
@@ -820,7 +727,7 @@ if (scrollToTop) {
             scrollToTop.classList.remove('visible');
         }
     });
-    
+
     scrollToTop.addEventListener('click', () => {
         window.scrollTo({
             top: 0,
@@ -838,13 +745,13 @@ function initReviewReadMore() {
         if (oldReadMore && oldReadMore.classList.contains('review-read-more')) {
             oldReadMore.remove();
         }
-        
+
         // Добавляем кнопку на всех разрешениях
         const readMore = document.createElement('span');
         readMore.className = 'review-read-more';
         readMore.textContent = 'Читать полностью...';
-        
-        readMore.addEventListener('click', function(e) {
+
+        readMore.addEventListener('click', function (e) {
             e.stopPropagation();
             if (reviewText.classList.contains('review-text-full')) {
                 reviewText.classList.remove('review-text-full');
@@ -854,7 +761,7 @@ function initReviewReadMore() {
                 readMore.textContent = 'Свернуть';
             }
         });
-        
+
         reviewText.parentNode.insertBefore(readMore, reviewText.nextSibling);
     });
 }
