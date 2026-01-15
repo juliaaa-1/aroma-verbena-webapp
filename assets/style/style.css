@@ -1,0 +1,1671 @@
+/* Reset и базовые стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --green-primary: #2d5016;
+    --green-light: #4a7c2a;
+    --green-bright: #6b9f3d;
+    --green-accent: #8bc34a;
+    --green-pale: #c8e6a9;
+    --green-bg: #f1f8e9;
+    --text-dark: #1a1a1a;
+    --text-light: #666;
+    --white: #ffffff;
+    --shadow: rgba(45, 80, 22, 0.1);
+    --content-width: 80%;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Улучшенная плавность для всех слайдеров */
+* {
+    scroll-behavior: smooth !important;
+}
+
+/* Плавные переходы для элементов слайдеров */
+.service-card,
+.review-card,
+.interior-item {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                opacity 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: var(--white);
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+}
+
+.container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Бургер меню */
+.burger-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    width: 40px;
+    height: 40px;
+    background: var(--green-primary);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+.burger-btn:hover {
+    background: var(--green-light);
+    transform: scale(1.05);
+}
+
+.burger-btn span {
+    width: 24px;
+    height: 2px;
+    background: var(--white);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.burger-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.burger-menu.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.burger-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.burger-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    background: var(--green-primary);
+    padding: 80px 40px 40px;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.burger-menu.active .burger-content {
+    transform: translateX(0);
+}
+
+.burger-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 36px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.burger-close:hover {
+    transform: rotate(90deg);
+}
+
+.burger-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    height: 100%;
+}
+
+.burger-link {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 24px;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.burger-link:hover {
+    color: var(--green-accent);
+    padding-left: 20px;
+    border-bottom-color: var(--green-accent);
+}
+
+/* Баннер - 100% ширины и высоты экрана */
+.banner {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: url('../image/интерьер/interior1.jpg') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+    overflow: hidden;
+}
+
+.banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(45, 80, 22, 0.6);
+    z-index: 0;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 1;
+    animation: fadeInUp 1s ease;
+}
+
+.banner-title {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.banner-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    opacity: 0.95;
+}
+
+.scroll-down {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--white);
+    border-radius: 50%;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    animation: bounce 2s infinite;
+    z-index: 1;
+}
+
+.scroll-down:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-50%) scale(1.1);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Секции */
+section {
+    padding: 80px 0;
+    width: 100%;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--green-primary);
+    text-align: center;
+    margin-bottom: 50px;
+    position: relative;
+    line-height: 1.2;
+}
+
+/* О Марии - 90% ширины */
+.about {
+    background: var(--green-bg);
+}
+
+.about-content {
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.about-title {
+    font-size: 2rem;
+    color: var(--green-primary);
+    margin-bottom: 40px;
+    text-align: center;
+    width: 100%;
+}
+
+.about-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    justify-content: center;
+    width: 100%;
+}
+
+.about-image {
+    flex: 0 0 auto;
+    width: 400px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.about-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px var(--shadow);
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.about-text-wrapper {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+}
+
+.about-intro {
+    font-size: 1.2rem;
+    color: var(--green-primary);
+    font-weight: 500;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.about-divider {
+    width: 100px;
+    height: 2px;
+    background: var(--green-accent);
+    margin: 0 0 15px;
+}
+
+.about-text {
+    text-align: left;
+}
+
+.about-text p {
+    font-size: 1.1rem;
+    line-height: 1.4;
+    color: var(--text-light);
+    margin-bottom: 4px;
+}
+
+/* Цитата - 90% ширины, на ПК фото слева текст справа */
+.quote {
+    background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-light) 100%);
+    color: var(--white);
+    padding: 100px 0;
+}
+
+.quote-content {
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.quote-image {
+    flex: 0 0 auto;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid var(--white);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.quote-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.quote-text {
+    flex: 1;
+    font-size: 1.5rem;
+    font-style: italic;
+    line-height: 1.8;
+    margin: 0;
+    padding: 0;
+    border: none;
+    text-align: left;
+    max-width: 90%;
+}
+
+/* Услуги - 90% ширины, кнопки с отступом 5px */
+.services {
+    background: var(--white);
+    padding-bottom: 20px;
+}
+
+.services .section-title {
+    margin-bottom: 10px;
+}
+
+.services-slider {
+    position: relative;
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.services-track {
+    width: 100%;
+    display: flex;
+    gap: 30px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 20px 0;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.service-card {
+    min-width: calc(33.333% - 20px);
+    flex: 0 0 calc(33.333% - 20px);
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+/* Планшет: 2 карточки */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .service-card {
+        min-width: calc(50% - 15px);
+        flex: 0 0 calc(50% - 15px);
+    }
+}
+
+/* Мобильный и средние экраны: 1 карточка до 768px */
+@media (max-width: 768px) {
+    .services-track {
+        gap: 0;
+        padding: 20px 0;
+        overflow-x: hidden; /* Убираем скролл */
+        scroll-behavior: smooth;
+        transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .service-card {
+        min-width: 100%;
+        flex: 0 0 100%;
+        margin-right: 0;
+    }
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+}
+
+.service-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.service-card h3 {
+    padding: 20px;
+    color: var(--green-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background: var(--green-primary);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px var(--shadow);
+    z-index: 10;
+}
+
+.slider-btn:hover {
+    background: var(--green-light);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.slider-btn-prev {
+    left: -47px;
+}
+
+.slider-btn-next {
+    right: -47px;
+}
+
+/* Специальное позиционирование для кнопок слайдеров с отступом 7px */
+.services-slider .slider-btn-prev {
+    left: -47px;
+}
+
+.services-slider .slider-btn-next {
+    right: -47px;
+}
+
+.reviews-slider .slider-btn-prev {
+    left: -47px;
+}
+
+.reviews-slider .slider-btn-next {
+    right: -47px;
+}
+
+.interior-slider .slider-btn-prev {
+    left: -47px;
+}
+
+.interior-slider .slider-btn-next {
+    right: -47px;
+}
+
+/* Интерьер - 90% ширины, кнопки с отступом 5px */
+.interior {
+    background: var(--white);
+    padding: 80px 0;
+}
+
+.interior .section-title {
+    margin-bottom: 30px;
+}
+
+.interior-slider {
+    position: relative;
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.interior-track {
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.interior-item {
+    min-width: 100%;
+    flex: 0 0 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px var(--shadow);
+    scroll-snap-align: start;
+}
+
+.interior-item img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    display: block;
+}
+
+.interior-dots {
+    display: none;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 20px;
+}
+
+.interior-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(45, 80, 22, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.interior-dot.active {
+    background: var(--green-primary);
+    width: 10px;
+    height: 10px;
+}
+
+.interior-nav-buttons {
+    display: none;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+    padding: 0 15px;
+}
+
+/* Показываем кнопки интерьера на мобильных */
+@media (max-width: 600px) {
+    .interior-nav-buttons {
+        display: flex !important;
+    }
+}
+
+.interior-nav-btn {
+    background: none;
+    border: 2px solid var(--green-primary);
+    border-radius: 50%;
+    color: var(--green-primary);
+    cursor: pointer;
+    padding: 10px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.interior-nav-btn:hover {
+    background: var(--green-primary);
+    color: var(--white);
+    transform: scale(1.05);
+}
+
+/* ЧаВо - 90% ширины */
+.faq {
+    background: var(--green-bg);
+}
+
+.faq-list {
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.faq-item {
+    background: var(--white);
+    border-radius: 15px;
+    margin: 0 auto 20px;
+    box-shadow: 0 3px 15px var(--shadow);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.faq-item:hover {
+    box-shadow: 0 5px 20px var(--shadow);
+    transform: translateY(-2px);
+}
+
+.faq-question {
+    width: 100%;
+    padding: 25px;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--green-primary);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.faq-question:hover {
+    background: var(--green-bg);
+}
+
+.faq-icon {
+    flex-shrink: 0;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 25px;
+    opacity: 0;
+    /* Transition теперь управляется через JavaScript для разных скоростей */
+}
+
+.faq-item.active .faq-answer {
+    max-height: 1000px;
+    padding: 20px 25px 25px;
+    opacity: 1;
+    /* Transition теперь управляется через JavaScript для разных скоростей */
+}
+
+.faq-answer p {
+    color: var(--text-light);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Отзывы - 90% ширины карточки, кнопки с отступом 5px */
+.reviews {
+    background: var(--white);
+    padding-top: 25px;
+}
+
+.reviews .section-title {
+    margin-bottom: 20px;
+}
+
+.reviews-slider {
+    position: relative;
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.reviews-track {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding: 20px 0;
+    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.review-card {
+    min-width: 100%;
+    flex: 0 0 100%;
+    background: var(--green-bg);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 5px 20px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.review-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--green-accent);
+}
+
+.review-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--green-primary);
+}
+
+.review-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    font-style: italic;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Показываем только 4 строчки по умолчанию */
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: calc(1.8em * 4);
+}
+
+.review-text-full {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+}
+
+.review-read-more {
+    color: var(--green-primary);
+    opacity: 1;
+    font-size: 0.95rem;
+    font-style: normal;
+    margin-top: 6px;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    display: inline-block; /* Показываем на всех разрешениях */
+    transition: opacity 0.3s ease;
+}
+
+.review-read-more:hover {
+    color: var(--green-light);
+    opacity: 1;
+}
+
+/* Кнопки листания внутри карточки отзыва */
+.review-card-nav {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: none; /* Скрываем на ПК по умолчанию */
+    gap: 10px;
+    z-index: 10;
+}
+
+/* Показываем кнопки навигации внутри карточек на мобильных (756px и меньше) */
+@media (max-width: 756px) {
+    .review-card-nav {
+        display: flex !important;
+    }
+    
+    /* Скрываем внешние боковые кнопки слайдера отзывов */
+    .reviews-slider .slider-btn {
+        display: none !important;
+    }
+    
+    /* Делаем отзывы на полную ширину экрана */
+    .reviews {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .reviews-slider {
+        width: 100vw;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .reviews-track {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 20px 0;
+        gap: 0;
+    }
+    
+    .review-card {
+        min-width: 100vw;
+        flex: 0 0 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+        margin: 0;
+        padding: 30px 20px 50px 20px;
+    }
+}
+
+.review-card-nav-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--green-primary);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px var(--shadow);
+}
+
+.review-card-nav-btn:hover {
+    background: var(--green-light);
+    transform: scale(1.1);
+}
+
+.review-card-nav-btn:active {
+    transform: scale(0.95);
+}
+
+.reviews-more {
+    text-align: center;
+    margin-top: 20px;
+    width: var(--content-width);
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.reviews-more p {
+    font-size: 1.1rem;
+    color: var(--text-light);
+}
+
+.reviews-link {
+    color: var(--green-primary);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 2px solid var(--green-accent);
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+
+.reviews-link:hover {
+    color: var(--green-light);
+    transform: translateY(-2px);
+    border-bottom-color: var(--green-light);
+}
+
+/* Карта - 90% ширины */
+.map-section {
+    background: var(--white);
+    padding-top: 40px;
+    padding-bottom: clamp(24px, 3vh, 48px);
+}
+
+.map-section .section-title {
+    margin-bottom: 30px;
+}
+
+.map-container {
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px var(--shadow);
+}
+
+.map-address {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--green-primary);
+    font-weight: 600;
+    padding-bottom: 3vh;
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Футер - 90% ширины всех кнопок */
+.footer {
+    background: var(--green-primary);
+    color: var(--white);
+    padding: 60px 0 40px;
+}
+
+.footer-content {
+    text-align: center;
+    width: 100%;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: var(--content-width);
+    max-width: 100%;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.footer-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 15px 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.footer-link:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--green-accent);
+    transform: translateY(-3px);
+}
+
+/* Кнопка наверх */
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: var(--green-light);
+    border: none;
+    border-radius: 50%;
+    color: var(--white);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 999;
+    box-shadow: 0 5px 15px var(--shadow);
+}
+
+.scroll-to-top.visible {
+    display: flex;
+}
+
+.scroll-to-top:hover {
+    background: var(--green-bright);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--shadow);
+}
+
+/* Адаптивность для планшетов (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .banner-title {
+        font-size: 3rem;
+    }
+    
+    .about-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .about-image {
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .quote-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: var(--content-width);
+        max-width: 100%;
+    }
+    
+    .quote-image {
+        margin-bottom: 20px;
+        align-self: center;
+    }
+    
+    .quote-text {
+        text-align: left;
+        width: 90%;
+        max-width: 90%;
+        line-height: 1.5;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .footer-link {
+        flex: 0 0 calc(50% - 7.5px);
+        max-width: calc(50% - 7.5px);
+    }
+}
+
+/* Адаптивность для мобильных (до 768px) */
+@media (max-width: 768px) {
+    .banner-title {
+        font-size: 2.5rem;
+    }
+    
+    .banner-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    /* Рамочка для баннера на мобильных */
+    .banner .banner-content {
+        padding: 20px 15px;
+        margin: 0 auto;
+        max-width: calc(100% - 30px);
+        width: calc(100% - 30px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .quote-text {
+        font-size: 1.2rem;
+    }
+    
+    .about-title {
+        font-size: 1.8rem;
+    }
+    
+    .about-wrapper {
+        flex-direction: column;
+    }
+    
+    .about-image {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .services {
+        padding-top: 60px;
+        padding-bottom: 40px;
+        background: var(--green-bg);
+    }
+    
+    .review-card {
+        padding: 23px 20px 40px 20px;
+    }
+    
+    .review-text {
+        line-height: 1.5;
+        font-size: 0.9rem;
+    }
+    
+    .review-header {
+        margin-bottom: 15px;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+    }
+    
+    .footer-link {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    
+    .burger-content {
+        max-width: 100%;
+    }
+    
+    .scroll-to-top {
+        width: 45px;
+        height: 45px;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Адаптивность для маленьких мобильных (до 600px) */
+@media (max-width: 600px) {
+    .banner {
+        min-height: 500px;
+    }
+    
+    .banner-title {
+        font-size: 1.5rem !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .banner-subtitle {
+        font-size: 0.9rem !important;
+    }
+    
+    section {
+        padding: 50px 0;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    .about-title {
+        font-size: 1.6rem;
+    }
+    
+    .about-text-wrapper {
+        max-width: 90%;
+        margin: 0 auto;
+        text-align: left;
+    }
+    
+    .about-intro {
+        text-align: left;
+    }
+    
+    .about-divider {
+        margin: 0 0 15px;
+    }
+    
+    .about-text {
+        text-align: left;
+    }
+    
+    .review-text {
+        line-height: 1.4;
+        font-size: 0.85rem;
+    }
+    
+    .review-header {
+        margin-bottom: 12px;
+    }
+    
+    .review-avatar {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .review-name {
+        font-size: 1.1rem;
+    }
+    
+    /* Цитата - такое же расположение как при 867px */
+    .quote-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: var(--content-width);
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .quote-image {
+        margin-bottom: 20px;
+        align-self: center;
+    }
+    
+    .quote-text {
+        text-align: left;
+        width: 90%;
+        max-width: 90%;
+        line-height: 1.5;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    /* Интерьер на 100% ширины, кнопки снизу */
+    .interior-slider {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .interior-track {
+        width: 100%;
+    }
+    
+    .interior-item {
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    .interior-item img {
+        height: 300px;
+        border-radius: 0;
+    }
+    
+    .interior-slider .slider-btn {
+        display: none;
+    }
+    
+    .interior-nav-buttons {
+        display: flex !important;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0 15px;
+        margin-top: 15px;
+    }
+    
+    .interior-nav-btn {
+        background: var(--white);
+        border: 2px solid var(--green-primary);
+        border-radius: 50%;
+        color: var(--green-primary);
+        cursor: pointer;
+        padding: 8px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        font-family: 'Montserrat', sans-serif;
+    }
+    
+    .interior-nav-btn:hover,
+    .interior-nav-btn:active {
+        background: var(--green-primary);
+        border-color: var(--green-primary);
+        color: var(--white);
+        transform: scale(1.05);
+    }
+    
+    /* Кнопки слайдеров услуг на мобильных */
+    .services-slider {
+        width: 75%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .services-track {
+        justify-content: flex-start;
+        align-items: stretch;
+        overflow-x: hidden; /* Убираем скролл */
+        touch-action: pan-y; /* Разрешаем только вертикальный скролл страницы */
+    }
+    
+    .services-slider .slider-btn {
+        display: flex;
+        width: 35px;
+        height: 35px;
+    }
+    
+    .services-slider .slider-btn-prev {
+        left: -38px;
+    }
+    
+    .services-slider .slider-btn-next {
+        right: -38px;
+    }
+    
+    /* Отзывы на полную ширину экрана */
+    .reviews {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .reviews-slider {
+        width: 100vw;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .reviews-track {
+        width: 100vw;
+        max-width: 100vw;
+        gap: 0;
+    }
+    
+    .review-card {
+        min-width: 100vw;
+        flex: 0 0 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+        margin: 0;
+        padding: 25px 20px 45px 20px;
+    }
+    
+    /* Карта на 100% ширины */
+    .map-container {
+        width: 100%;
+        border-radius: 0;
+    }
+    
+    .map-section {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .slider-btn {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* Уменьшаем межстрочный интервал в ЧАВО для маленьких экранов */
+@media (max-width: 420px) {
+    .faq-answer p {
+        line-height: 1.5;
+    }
+}
+
+/* Уменьшаем размер заголовков для очень маленьких экранов */
+@media (max-width: 460px) {
+    .section-title {
+        font-size: 1.6rem;
+    }
+    
+    .banner-title {
+        font-size: 1.3rem !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .banner-subtitle {
+        font-size: 0.85rem !important;
+    }
+    
+    .about-title {
+        font-size: 1.4rem;
+    }
+    
+    .quote-text {
+        font-size: 1.1rem;
+        line-height: 1.4;
+    }
+}
+
+/* Исправление пустого пространства справа для диапазона 540-383px */
+@media (max-width: 540px) and (min-width: 384px) {
+    body {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100vw;
+    }
+    
+    html {
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100vw;
+        padding: 0;
+        margin: 0;
+    }
+    
+    section {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .about-content,
+    .quote-content,
+    .services-slider,
+    .interior-slider,
+    .faq-list,
+    .map-container,
+    .footer-links {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+    }
+    
+    .services-slider {
+        width: 75%;
+        max-width: calc(100vw - 100px);
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    /* Отзывы на полную ширину без отступов */
+    .reviews {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .reviews-slider {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .reviews-track {
+        width: 100vw;
+        max-width: 100vw;
+        gap: 0;
+    }
+    
+    .review-card {
+        min-width: 100vw;
+        flex: 0 0 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+        margin: 0;
+        padding: 25px 20px 45px 20px;
+    }
+    
+    .interior-slider {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .interior-track {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item {
+        width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item img {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .map-container {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0;
+    }
+}
+
+/* Исправление пустого пространства справа для очень маленьких экранов */
+@media (max-width: 390px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    * {
+        max-width: 100%;
+    }
+    
+    .container {
+        width: 100%;
+        max-width: 100vw;
+        padding: 0;
+        margin: 0;
+    }
+    
+    section {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .banner {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .about-content,
+    .quote-content,
+    .faq-list,
+    .map-container,
+    .footer-links {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+    }
+    
+    .services-slider {
+        width: 70%;
+        max-width: calc(100vw - 100px);
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .reviews-slider {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .reviews-track {
+        width: 100vw;
+        max-width: 100vw;
+        gap: 0;
+    }
+    
+    .review-card {
+        min-width: 100vw;
+        flex: 0 0 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+        margin: 0;
+        padding: 20px 15px 40px 15px;
+    }
+    
+    .interior-slider {
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .interior-slider {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .interior-track {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item {
+        width: 100vw;
+        min-width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .interior-item img {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .map-container {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0;
+    }
+    
+    /* Кнопки услуг остаются видимыми, делаем блок еще поуже */
+    .services-slider {
+        width: 70%;
+    }
+    
+    .services-track {
+        overflow-x: hidden; /* Убираем скролл */
+        touch-action: pan-y; /* Разрешаем только вертикальный скролл страницы */
+    }
+    
+    .services-slider .slider-btn {
+        display: flex !important;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .services-slider .slider-btn-prev {
+        left: -36px;
+    }
+    
+    .services-slider .slider-btn-next {
+        right: -36px;
+    }
+    
+    .interior-nav-buttons {
+        padding: 0 10px;
+    }
+}
+
